@@ -1,0 +1,10 @@
+{
+  "name": "core-learning",
+  "description": "Analyze Java frameworks inside-out and build simplified versions with progressive learning — includes core-blueprint (outline planning) and core-builder (feature implementation) skills, powered by specialized agents for framework exploration, architecture design, and code review",
+  "version": "1.0.0",
+  "author": {
+    "name": "nlinhvu"
+  },
+  "license": "Apache-2.0",
+  "keywords": ["java", "framework", "learning", "tutorial", "simplified", "core-first"]
+}

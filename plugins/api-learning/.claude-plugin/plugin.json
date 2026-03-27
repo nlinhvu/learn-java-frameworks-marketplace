@@ -1,0 +1,10 @@
+{
+  "name": "api-learning",
+  "description": "Analyze Java frameworks outside-in from the API surface and build simplified versions with progressive learning — includes api-blueprint (outline planning) and api-builder (feature implementation) skills, powered by specialized agents for API surface exploration, vertical slice architecture design, and code review",
+  "version": "1.0.0",
+  "author": {
+    "name": "nlinhvu"
+  },
+  "license": "Apache-2.0",
+  "keywords": ["java", "framework", "learning", "tutorial", "simplified", "api-first"]
+}
