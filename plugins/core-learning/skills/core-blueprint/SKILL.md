@@ -2,12 +2,12 @@
 name: core-blueprint
 version: 1.0.0
 description: >
-  Analyzes a Java framework's source code and produces a progressive learning outline (core-outline.md)
-  for building a simplified version inside-out — starting from the internal core and building outward.
-  Generates a dependency graph, ASCII architecture diagrams, and a buildable project skeleton. Triggers on
-  "analyze this framework's internals", "inside-out outline for X", "core-first learning plan",
-  "create a learning outline for X", "map the core internals", "core-blueprint", or any request to map
-  a Java framework's core architecture for inside-out reimplementation.
+  This skill should be used when the user asks to "analyze this framework's internals", "inside-out outline for X",
+  "core-first learning plan", "create a learning outline for X", "map the core internals", "core-blueprint",
+  or any request to map a Java framework's core architecture for inside-out reimplementation. Analyzes a Java
+  framework's source code and produces a progressive learning outline (core-outline.md) for building a simplified
+  version inside-out — starting from the internal core and building outward. Generates a dependency graph,
+  ASCII architecture diagrams, and a buildable project skeleton.
 ---
 
 # Core Blueprint — Inside-Out Learning Outline

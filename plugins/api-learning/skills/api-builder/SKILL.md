@@ -2,11 +2,11 @@
 name: api-builder
 version: 1.0.0
 description: >
-  Implements a specific API capability from an api-blueprint outline, generating working Java source
-  code, client-perspective and internal tests, and a code-first tutorial chapter — all verified to
-  compile and pass. Requires a feature name argument matching an entry in api-outline.md. Triggers on
-  "api-builder", "implement <feature name>", "build the <feature> API", "next feature", "next api",
-  "next api feature", or any request to implement a vertical slice from an API-first learning outline.
+  This skill should be used when the user asks to "api-builder", "implement <feature name>", "build the
+  <feature> API", "next feature", "next api", "next api feature", or any request to implement a vertical
+  slice from an API-first learning outline. Implements a specific API capability from an api-blueprint outline,
+  generating working Java source code, client-perspective and internal tests, and a code-first tutorial chapter —
+  all verified to compile and pass. Requires a feature name argument matching an entry in api-outline.md.
 ---
 
 # API Builder — API-First Implementation

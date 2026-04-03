@@ -2,12 +2,12 @@
 name: core-builder
 version: 1.0.0
 description: >
-  Implements a specific feature from a core-blueprint outline, generating working Java source code,
-  unit/integration tests, and a code-first tutorial guide — all verified to compile and pass. Uses
-  the inside-out approach starting from the integration point. Requires a feature name argument
-  matching an entry in core-outline.md. Triggers on "core-builder", "implement <feature name>", "build
-  the <component> feature", "next feature", "next core feature", or any request to implement a
-  component from a core-blueprint outline.
+  This skill should be used when the user asks to "core-builder", "implement <feature name>", "build the
+  <component> feature", "next feature", "next core feature", or any request to implement a component from
+  a core-blueprint outline. Implements a specific feature from a core-blueprint outline, generating working
+  Java source code, unit/integration tests, and a code-first tutorial guide — all verified to compile and pass.
+  Uses the inside-out approach starting from the integration point. Requires a feature name argument matching
+  an entry in core-outline.md.
 ---
 
 # Core Builder — Feature Implementation
