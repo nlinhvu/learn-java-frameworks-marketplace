@@ -2,12 +2,12 @@
 name: api-blueprint
 version: 1.0.0
 description: >
-  Analyzes a Java framework's source code and produces an API-first learning outline (api-outline.md)
-  that maps the public API surface, traces each capability inward through implementation layers,
-  generates ASCII call-chain diagrams, and creates a buildable project skeleton. Triggers on "analyze
-  this framework's API", "outside-in outline for X", "API-first learning plan", "create a learning
-  outline for X", "trace the public API", "analyze the API surface", "api-blueprint", or any request
-  to map a Java framework's API surface for outside-in reimplementation.
+  This skill should be used when the user asks to "analyze this framework's API", "outside-in outline for X",
+  "API-first learning plan", "create a learning outline for X", "trace the public API", "analyze the API surface",
+  "api-blueprint", or any request to map a Java framework's API surface for outside-in reimplementation. Analyzes
+  a Java framework's source code and produces an API-first learning outline (api-outline.md) that maps the public
+  API surface, traces each capability inward through implementation layers, generates ASCII call-chain diagrams,
+  and creates a buildable project skeleton.
 ---
 
 # API Blueprint — API-First Learning Outline
