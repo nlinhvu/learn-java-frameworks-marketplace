@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "learn-java-frameworks-marketplace",
   "version": "1.0.0",
-  "description": "Learn Java frameworks by analyzing and building simplified versions — includes API-first (outside-in), core-first (inside-out), and enterprise re-implementation (any-language-to-Java) learning approaches",
+  "description": "Analyze any source project (Python, Go, Rust, Node.js, C#, Ruby, Java, etc.) and build simplified Java reimplementations with progressive code-first tutorials, Mermaid diagrams, and Insight blocks — three learning approaches: API-first (outside-in), core-first (inside-out), and enterprise re-implementation",
   "owner": {
     "name": "nlinhvu"
   },
@@ -10,19 +10,19 @@
   "plugins": [
     {
       "name": "api-learning",
-      "description": "Analyze Java frameworks outside-in from the API surface and build simplified versions with progressive learning",
+      "description": "Analyze any source project outside-in from the API surface and build simplified Java reimplementations with vertical slice tutorials, Mermaid call-chain diagrams, and Insight blocks",
       "source": "./plugins/api-learning",
       "category": "development"
     },
     {
       "name": "core-learning",
-      "description": "Analyze Java frameworks inside-out and build simplified versions with progressive learning",
+      "description": "Analyze any source project inside-out from the internal core and build simplified Java reimplementations with progressive tutorials, Mermaid architecture diagrams, and Insight blocks",
       "source": "./plugins/core-learning",
       "category": "development"
     },
     {
       "name": "enterprise-learning",
-      "description": "Re-implement any source project (any language) into enterprise-grade Java with rich tutorials, Mermaid visualizations, and Insight blocks",
+      "description": "Re-implement any source project (any language) into enterprise-grade Java with Spring Boot 4 or plain Java 21+, rich 10-section tutorials, Mermaid visualizations, and Insight blocks",
       "source": "./plugins/enterprise-learning",
       "category": "development"
     }

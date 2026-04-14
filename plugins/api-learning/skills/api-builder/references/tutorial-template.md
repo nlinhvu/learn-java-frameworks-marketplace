@@ -1,7 +1,10 @@
-# Tutorial Template (API-First)
+# Tutorial Template (API-First — 10-Section Structure)
 
 Each chapter is `api-docs/chNN_<feature_name>.md`. Replace `N` with the chapter number
 and `{{placeholders}}` with actual content.
+
+**IMPORTANT**: Every chapter MUST have all 10 sections. If a section doesn't apply to this
+feature, include it with: "N/A — this feature does not involve [topic]" and a brief explanation.
 
 ---
 
@@ -62,6 +65,12 @@ This is the entry point — the public class clients import:
 {{For NEW files: show complete code}}
 {{For MODIFIED files: state the file, describe what changed, show the diff or the new method}}
 
+> ★ **Insight** -------------------------------------------
+> - **Why {{design decision}}?** {{Rationale with alternatives considered}}
+> - **Trade-off:** {{What was sacrificed, downsides}}
+> - **Recommend:** {{When to use this approach}}
+> -----------------------------------------------------------
+
 {{Explain what this layer does and what it delegates to the next layer}}
 
 ### N.3.2 {{Next Layer Name}} — {{purpose}}
@@ -73,6 +82,12 @@ This is the entry point — the public class clients import:
 
 {{Explain: what does this class receive from the layer above?
 What does it do? What does it return/delegate?}}
+
+> ★ **Insight** -------------------------------------------
+> - **Why {{simplification or pattern choice}}?** {{Rationale}}
+> - **Trade-off:** {{What the source project does differently and why}}
+> - **Recommend:** {{Guidance for real projects}}
+> -----------------------------------------------------------
 
 {{Continue for each depth layer...}}
 
@@ -122,38 +137,91 @@ With the vertical slice working, add targeted tests for internal components:
 
 ## N.6 Why This Works
 
-> ★ **Insight** ─────────────────────────────────
->
-> - {{Why this API design is effective — what principle does it follow?}}
-> - {{What's the trade-off vs. alternative designs?}}
-> - {{How does the real framework handle this differently, and why?}}
->
-> ─────────────────────────────────────────────────
+> ★ **Insight** -------------------------------------------
+> - **Why {{core design decision for this feature}}?** {{Deep rationale with alternatives considered}}
+> - **Trade-off:** {{What was sacrificed, downsides, when this choice might be wrong}}
+> - **Recommend:** {{For the learner: when to use this approach in real projects}}
+> -----------------------------------------------------------
 
 {{1-3 insight blocks. Focus on WHY the design works, not WHAT the code does.
-Connect to the real framework's approach. Include trade-offs.}}
+Topics should cover the most impactful design decisions in this feature:
+- API design rationale (fluent vs annotation vs config)
+- Layer boundary justification
+- Simplification decision reasoning
+- How the source project handles this differently and why}}
 
 ## N.7 What We Enhanced
 
-{{SKIP this section for Chapter 1 — there's nothing to compare against yet.}}
-{{For Chapter 2+, this table is MANDATORY.}}
+{{FOR CHAPTER 1:}}
 
-| Component     | Before (Ch {{N-1}})  | Current (Ch {{N}})  | Real Framework                  |
+**Foundation established.** This chapter created the core API and internal machinery:
+
+| Component | What Was Created | Purpose |
+|-----------|-----------------|---------|
+| {{component}} | {{what was built}} | {{why it exists}} |
+
+{{FOR CHAPTER 2+: This table is MANDATORY.}}
+
+| Component     | Before (Ch {{N-1}})  | Current (Ch {{N}})  | Source Project                  |
 |---------------|----------------------|---------------------|---------------------------------|
-| {{component}} | {{previous state}}   | {{current state}}   | {{what real framework does}}    |
+| {{component}} | {{previous state}}   | {{current state}}   | {{what source project does}}    |
 
 {{At least one row per chapter. Show how internals grow to support new API capabilities.}}
 
-## N.8 Connection to Real Framework
+## N.8 Connection to Source Project
 
-| Simplified                   | Real Framework           | Source Reference                  |
-|------------------------------|--------------------------|-----------------------------------|
-| `simple.api.{{Class}}`      | `{{real.package.Class}}` | [`{{file}}:{{line}}`]({{url}})    |
-| `simple.internal.{{Class}}` | `{{real.package.Class}}` | [`{{file}}:{{line}}`]({{url}})    |
+| Simplified Java              | Source Project ({{Language}})  | Source Reference                  |
+|------------------------------|-------------------------------|-----------------------------------|
+| `simple.api.{{Class}}`      | `{{source.package.Class/Function}}` | [`{{file}}:{{line}}`]({{url}})    |
+| `simple.internal.{{Class}}` | `{{source.package.Class/Function}}` | [`{{file}}:{{line}}`]({{url}})    |
+
+{{IF source language is not Java, include technology mapping:}}
+
+**Technology Mapping ({{Language}} → Java)**:
+
+| Source Concept ({{Language}}) | Java Equivalent | Rationale |
+|-------------------------------|-----------------|-----------|
+| {{source concept}}            | {{Java equivalent}} | {{why this mapping was chosen}} |
 
 Verified against commit: `{{short-hash}}`
 
-## N.9 Complete Code
+## N.9 Architecture Visualization
+
+<!-- diagram: ch{{NN}}_{{feature_slug}}_vertical_slice -->
+```mermaid
+flowchart TD
+    subgraph "{{Feature Name}} — Vertical Slice"
+        API["api/{{ClassName}}"]
+        DISP["internal/{{Dispatcher}}"]
+        PROC["internal/{{Processor}}"]
+    end
+    CLIENT["Client Code"] -->|"calls"| API
+    API -->|"delegates"| DISP
+    DISP -->|"invokes"| PROC
+    style CLIENT fill:#f7dc6f,color:#333
+    style API fill:#4ecdc4,color:#fff
+    style DISP fill:#45b7d1,color:#fff
+    style PROC fill:#45b7d1,color:#fff
+```
+
+{{Additional diagrams as needed:}}
+
+{{FOR features with complex call chains:}}
+<!-- diagram: ch{{NN}}_{{feature_slug}}_call_chain -->
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as API Layer
+    participant D as Dispatch
+    participant P as Processing
+    C->>A: {{api.method(args)}}
+    A->>D: {{dispatch call}}
+    D->>P: {{processing call}}
+    P-->>A: {{result}}
+    A-->>C: {{return value}}
+```
+
+## N.10 Complete Code
 
 All files created or modified in this chapter. Copy all `[NEW]` files and replace
 all `[MODIFIED]` files to get a compiling project with all tests passing.
@@ -199,15 +267,18 @@ and what new internal machinery it will require}}
 
 ## Template Rules
 
-1. **Build Challenge**: ONE row only. Current state → Limitation → Objective.
-2. **API Contract comes FIRST**: Show what clients will call before any implementation.
-3. **Client tests before implementation**: Tests define the contract, implementation fulfills it.
-4. **Call chain order**: Implement top-down (API → Dispatch → Processing → Infrastructure).
-5. **Code before explanation**: Show the code, then explain what it does and why.
-6. **File annotations**: Every code block header states the file path and `[NEW]` or `[MODIFIED]`.
-7. **Modified files**: State the file, describe the change, show the specific change.
-8. **Complete Code**: Generated by reading actual `src/` files. Must match reality exactly.
-9. **Insight blocks**: ONLY in N.6 "Why This Works". 1-3 per chapter. Focus on WHY.
-10. **What We Enhanced**: SKIP for ch01. MANDATORY for ch02+. At least one row.
-11. **Copy-paste guarantee**: If reader copies `[NEW]` files and replaces `[MODIFIED]` files,
-    the project compiles and all tests pass.
+1. **All 10 sections**: Every chapter has N.1 through N.10. Mark inapplicable sections "N/A — this feature does not involve [topic]" rather than omitting.
+2. **Build Challenge**: ONE row only. Current state → Limitation → Objective.
+3. **API Contract comes FIRST**: Show what clients will call before any implementation.
+4. **Client tests before implementation**: Tests define the contract, implementation fulfills it.
+5. **Call chain order**: Implement top-down (API → Dispatch → Processing → Infrastructure).
+6. **★ Insight blocks at decision points**: In N.3 (implementation) AND N.6 (Why This Works), with minimum Why + Trade-off + Recommend.
+7. **Code before explanation**: Show the code, then explain what it does and why.
+8. **File annotations**: Every code block header states the file path and `[NEW]` or `[MODIFIED]`.
+9. **Modified files**: State the file, describe the change, show the specific change.
+10. **Complete Code**: Generated by reading actual `src/` files. Must match reality exactly.
+11. **Architecture Visualization (N.9)**: At least one Mermaid diagram per chapter, using standardized color palette and `<!-- diagram: slug -->` markers.
+12. **What We Enhanced (N.7)**: Foundation table for ch01. MANDATORY enhancement table for ch02+.
+13. **Copy-paste guarantee**: If reader copies `[NEW]` files and replaces `[MODIFIED]` files, the project compiles and all tests pass.
+14. **Mermaid diagrams**: Use standardized 7-color palette, `<!-- diagram: slug -->` comment markers, labeled arrows, subgraphs for logical grouping.
+15. **Emoji markers**: 🔑 Essential, ⚠️ Pitfall, 🚫 Constraint, ★ Insight, 🔄 Call chain — used consistently.

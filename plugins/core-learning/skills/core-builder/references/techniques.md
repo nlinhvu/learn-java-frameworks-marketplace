@@ -119,7 +119,7 @@ public interface HttpRequestFactory {
 
 **Example:**
 ```markdown
-## 3.3 Try It Yourself
+## N.4 Try It Yourself
 
 <details>
 <summary>Challenge: Create a type-safe bean resolver that finds beans by their interface type</summary>
@@ -191,21 +191,29 @@ void shouldResolveBean_WhenRegisteredByType() {
 
 ## 6. Source Code Mapping Tables
 
-**What**: Three levels of mapping between simplified code and real framework source.
+**What**: Three levels of mapping between simplified Java code and source project code (any language).
 
-**Why**: Connects the learner's simplified implementation to the real framework, showing where concepts align and where the real code adds complexity.
+**Why**: Connects the learner's simplified Java implementation to the source project, showing where concepts align and where the source code adds complexity. When the source is not Java, the mapping also shows how language constructs translate.
 
 **Per-chapter mapping (most common):**
 ```markdown
-| Simplified Code | Real Framework Code | File:Line | Key Difference |
-|----------------|--------------------|-----------| ---------------|
+| Simplified Java Code | Source Project Code | File:Line | Key Difference |
+|---------------------|--------------------|-----------| ---------------|
 | `SimpleBeanContainer` | `DefaultListableBeanFactory` | `DefaultListableBeanFactory.java:185` | Real handles circular deps, lazy init, scopes |
 | `register()` | `registerBeanDefinition()` | `DefaultListableBeanFactory.java:892` | Real uses BeanDefinition metadata objects |
 ```
 
+**Cross-language mapping (when source is not Java):**
+```markdown
+| Simplified Java Code | Source Code (Python) | File:Line | Technology Mapping |
+|---------------------|---------------------|-----------|-------------------|
+| `SimpleRouter` class | `Flask.url_map` (Werkzeug `Map`) | `app.py:42` | Python dict-based routing → Java `Map<String, Handler>` |
+| `handle(Request)` method | `Flask.wsgi_app()` | `app.py:108` | WSGI callable → Java `HttpHandler.handle()` |
+```
+
 **Cross-chapter evolution (in later chapters):**
 ```markdown
-| Concern | ch01 | ch03 | ch05 | Real Framework |
+| Concern | ch01 | ch03 | ch05 | Source Project |
 |---------|------|------|------|---------------|
 | Bean storage | `Map<Class, Supplier>` | `Map<String, BeanDefinition>` | same + scope | `ConcurrentHashMap` + `BeanDefinitionRegistry` |
 | Resolution | by type only | by name + type | + qualifier | `DependencyDescriptor` chain |
@@ -219,13 +227,13 @@ void shouldResolveBean_WhenRegisteredByType() {
 
 **What**: "What We Enhanced" table, mandatory for ch02+, skip ch01.
 
-**Why**: Shows the reader that simplifications are temporary. Each chapter enhances previous internals to support new capabilities. The "Real Framework" column shows what's left — the gap shrinks every chapter.
+**Why**: Shows the reader that simplifications are temporary. Each chapter enhances previous internals to support new capabilities. The "Source Project" column shows what's left — the gap shrinks every chapter.
 
 **Example:**
 ```markdown
-## 5.6 What We Enhanced
+## 5.7 What We Enhanced
 
-| Aspect | Before (ch01) | Current (ch05) | Real Framework |
+| Aspect | Before (ch01) | Current (ch05) | Source Project |
 |--------|--------------|----------------|----------------|
 | Bean storage | `Map<Class, Object>` — single instance per type | `Map<String, BeanDefinition>` — named beans with metadata | `ConcurrentHashMap<String, BeanDefinition>` with `BeanDefinitionRegistry` (`DefaultListableBeanFactory.java:185`) |
 | Resolution | Direct type lookup | Name-based + type-based with precedence | `DependencyDescriptor` resolution chain with qualifiers |
@@ -234,7 +242,7 @@ void shouldResolveBean_WhenRegisteredByType() {
 **Rules:**
 - At least one row per chapter (except ch01)
 - "Before" column references a specific chapter
-- "Real Framework" references production code with file:line
+- "Source Project" references production code with file:line
 - Enhancement must be real — don't claim enhancement if the code didn't change
 
 ---
@@ -271,51 +279,91 @@ private final Map<String, Object> singletons = new HashMap<>();
 
 ---
 
-## 9. ASCII Diagrams
+## 9. Rich Mermaid Visualization
 
-**What**: Visual diagrams for execution flows, class hierarchies, and component relationships.
+**What**: Mermaid diagrams throughout tutorials — integration point diagrams, execution flows,
+component relationships, class hierarchies, lifecycle state machines — all using the
+standardized 7-color palette.
 
-**Why**: A diagram communicates structure faster than prose. Use for any structure with 3+ components.
+**Why**: Visual diagrams accelerate understanding of:
+- Integration point structure (where features plug into the core)
+- Execution flows (sequence diagrams)
+- Component relationships (flowchart diagrams)
+- Class hierarchies (class diagrams)
+- Lifecycle state transitions (state diagrams)
+- Feature progression (how internals grow across chapters)
 
-**Class/interface hierarchy:**
+**Rules**:
+- Every Mermaid block has `<!-- diagram: slug_name -->` comment above it
+- All arrows labeled with data type, protocol, or relationship
+- Subgraphs for logical grouping
+- Standardized colors: Teal (core), Blue (internal logic), Purple (extension points),
+  Orange (config), Red (error), Green (success), Yellow (external/app code)
+- GitHub-renderable only
+
+**Example — Integration Point**:
+```markdown
+<!-- diagram: ch05_lifecycle_integration -->
+```mermaid
+flowchart TD
+    subgraph "Existing Core"
+        CONTAINER["BeanContainer"]
+    end
+    subgraph "New: Lifecycle"
+        INIT["InitializingBean"]
+        DESTROY["DisposableBean"]
+        BPP["BeanPostProcessor"]
+    end
+    CONTAINER -->|"integration point: createBean()"| BPP
+    BPP -->|"after init"| INIT
+    BPP -->|"before destroy"| DESTROY
+    style CONTAINER fill:#4ecdc4,color:#fff
+    style INIT fill:#45b7d1,color:#fff
+    style DESTROY fill:#45b7d1,color:#fff
+    style BPP fill:#bb8fce,color:#fff
 ```
-BeanFactory                              ← getBean()
-├── ListableBeanFactory                  ← getBeanNamesForType()
-│   └── ApplicationContext               ← extends both + environment, events
-│       └── ConfigurableApplicationContext ← refresh(), close()
-└── HierarchicalBeanFactory              ← getParentBeanFactory()
+
+**Example — Execution Flow**:
+```markdown
+<!-- diagram: ch03_getbean_flow -->
+```mermaid
+sequenceDiagram
+    participant APP as Application
+    participant BF as BeanFactory
+    participant REG as Registry
+    participant CACHE as Singleton Cache
+    APP->>BF: getBean("userService")
+    BF->>CACHE: check cache
+    CACHE-->>BF: miss
+    BF->>REG: getBeanDefinition("userService")
+    REG-->>BF: BeanDefinition
+    BF->>BF: resolve dependencies (recursive)
+    BF->>BF: create instance
+    BF->>CACHE: store singleton
+    BF-->>APP: UserService instance
 ```
 
-**Execution flow:**
+**Example — Lifecycle State Machine**:
+```markdown
+<!-- diagram: ch05_bean_lifecycle -->
+```mermaid
+stateDiagram-v2
+    [*] --> Registered
+    Registered --> Instantiated : createBean()
+    Instantiated --> Initialized : afterPropertiesSet()
+    Initialized --> Ready : postProcessAfterInit()
+    Ready --> Destroying : close()
+    Destroying --> [*] : destroy()
+```
+
+**ASCII as supplement**: For inline execution traces within tutorial prose where
+a quick visual suffices, ASCII diagrams can supplement (not replace) Mermaid:
 ```
 container.getBean("userService")
-    │
-    ├──> Check singleton cache
-    │    └── Found? → return
-    │
-    ├──> Get BeanDefinition
-    │    └── Not found? → throw NoSuchBeanException
-    │
-    ├──> Resolve dependencies (recursive getBean)
-    │
-    ├──> Create instance (constructor injection)
-    │
-    ├──> Apply BeanPostProcessors
-    │
-    └──> Cache as singleton → return
-```
-
-**Layer diagram:**
-```
-┌──────────────────────────────────────┐
-│          Application Code            │
-├──────────────────────────────────────┤
-│     ApplicationContext (ch05)        │
-├──────────────────────────────────────┤
-│     BeanFactory + Container (ch01)   │
-├──────────────────────────────────────┤
-│     BeanDefinition Registry (ch03)   │
-└──────────────────────────────────────┘
+    ├──> Check singleton cache → miss
+    ├──> Get BeanDefinition → found
+    ├──> Resolve dependencies (recursive)
+    └──> Create, cache, return
 ```
 
 ---
@@ -337,23 +385,90 @@ container.getBean("userService")
 
 ---
 
-## 11. Insight Blocks
+## 11. Structured Insight Blocks
 
-**What**: Educational blocks explaining WHY design decisions work.
-
-**Why**: Insights transform "I copied this pattern" into "I understand why this pattern exists and when to use it." Always in the "Why This Works" section, AFTER code.
+**What**: Educational blocks explaining WHY design decisions work, with a structured
+6-field format for maximum learning value.
 
 **Format:**
 ```markdown
-> ★ **Insight** ─────────────────────────────────
-> - **Why Factory over direct instantiation?** The Factory Pattern follows the Dependency Inversion Principle — high-level modules don't depend on low-level implementations. This is why Spring's entire DI container works.
-> - **When to skip it:** If your component will only ever have one implementation, a factory adds indirection without benefit. Not everything needs to be abstracted.
-> - **Real-world parallel:** Spring's `BeanFactory` is literally this pattern. `DefaultListableBeanFactory` is the one implementation that handles 99% of use cases.
-> ─────────────────────────────────────────────────
+> ★ **Insight** -------------------------------------------
+> - **Why [topic]?** [Rationale with alternatives considered]
+> - **Trade-off:** [What was sacrificed. Downsides. When this choice might be wrong.]
+> - **Recommend:** [For the learner: when to use this approach vs. alternatives]
+> - **Where:** [→ src/path/File.java — methodName]
+> - **When:** [During init? Runtime? Under load?]
+> - **How to verify:** [Test, log output, or metric that confirms understanding]
+> -----------------------------------------------------------
 ```
 
-**Guidelines:**
+**Example:**
+```markdown
+> ★ **Insight** -------------------------------------------
+> - **Why Factory over direct instantiation?** The Factory Pattern follows the Dependency
+>   Inversion Principle — high-level modules don't depend on low-level implementations.
+>   Spring's entire DI container is built on this pattern. Alternatives like direct `new`
+>   calls create tight coupling that prevents testing and extensibility.
+> - **Trade-off:** Adds indirection. If your component will only ever have one implementation,
+>   a factory adds complexity without benefit. Not everything needs to be abstracted.
+> - **Recommend:** Use factories when you need pluggable implementations or testability.
+>   Skip when the class is simple and will never be swapped.
+> - **Where:** → src/main/java/simple/spring/BeanFactory.java — getBean()
+> - **How to verify:** Run `BeanFactoryTest.shouldResolveBean_WhenRegisteredByType` — it proves
+>   the factory resolves the correct implementation without the caller knowing the concrete class.
+> -----------------------------------------------------------
+```
+
+**Rules:**
+- **Placement**: In TWO places — N.1-N.3 (at design decision points during implementation) AND N.6 (comprehensive insights)
+- **Minimum fields**: Every insight MUST have: **Why** + **Trade-off** + **Recommend**
+- **Full fields**: Include all 6 fields when information is available
+- 1-3 comprehensive insights in N.6 per chapter
 - Focus on "why" not "what"
-- Include trade-offs: when NOT to use this pattern
-- Connect to the real framework: how does the actual codebase use this same idea?
-- Keep to 2-3 bullet points per block
+- Connect to the source project: how does the actual codebase use this same idea?
+- Lower-impact insights use collapsible `<details>` blocks
+
+**Good insight topics for core-first:**
+- Why this integration point was chosen over alternatives
+- Why this simplification captures the essential pattern
+- Why this design pattern is used (and when it shouldn't be)
+- How the source project handles the same concept with more complexity
+- Why the progressive enhancement across chapters mirrors real project growth
+- (Cross-language) Why this Java construct was chosen to represent the source language's idiom
+
+**Bad insight topics:**
+- Describing what code does (the code is right there)
+- Generic Java advice ("use interfaces for abstraction")
+- Repeating what the project's documentation says
+
+---
+
+## 12. Technology Substitution Tables
+
+**What**: A lightweight mapping table showing how source language constructs translate to Java equivalents, used when the source project is not Java.
+
+**Why**: When reimplementing a Python, Go, Rust, or other non-Java project in simplified Java, learners need to understand WHY each Java construct was chosen. This table bridges the language gap and makes the architectural intent clear.
+
+**Format:**
+```markdown
+### Technology Mapping ([Source Language] → Java)
+
+| Source Construct | Java Equivalent | Preserves | Example |
+|-----------------|----------------|-----------|---------|
+| Python `@decorator` | Wrapper class or `@Annotation` + proxy | Declarative behavior modification | `@app.route("/")` → `@Route("/")` + `RouteRegistry` |
+| Go `interface` (implicit) | Java `interface` (explicit `implements`) | Contract-based polymorphism | `http.Handler` → `HttpHandler` |
+| Go `goroutine` | `ExecutorService.submit()` | Lightweight concurrency | `go serve(conn)` → `executor.submit(() -> serve(conn))` |
+| Rust `trait` | Java `interface` + `default` methods | Shared behavior with defaults | `impl Handler for App` → `class App implements Handler` |
+| Rust `Result<T, E>` | Java `Optional<T>` or checked exception | Error signaling | `Result::Ok(v)` → `return value` / `throw new AppException()` |
+| Python `generator` / `yield` | Java `Iterator<T>` or `Stream<T>` | Lazy sequence production | `yield item` → `iterator.next()` |
+| Node.js `async/await` | Java `CompletableFuture<T>` | Async composition | `await fetch(url)` → `httpClient.sendAsync(req)` |
+| C# `extension method` | Java static utility method | Add behavior without subclassing | `list.Where(...)` → `StreamUtils.filter(list, ...)` |
+| Ruby `module` (mixin) | Java `interface` + `default` methods | Behavior composition | `include Enumerable` → `implements Iterable<T>` |
+```
+
+**When to use:**
+- Include in the outline (`core-outline.md`) Technology Mapping section
+- Include per-chapter in N.8 (Connection to Source Project) when that chapter introduces new cross-language mappings
+- Keep it lightweight — only map constructs that actually appear in the feature being implemented
+
+**Key principle:** The mapping should preserve **architectural intent**, not just syntax. A Go channel is not just "like a queue" — it's a concurrency coordination primitive, so `BlockingQueue` is the right Java equivalent because it also blocks on empty/full.

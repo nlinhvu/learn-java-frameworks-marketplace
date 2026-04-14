@@ -1,13 +1,16 @@
-# Tutorial Chapter Template
+# Tutorial Chapter Template (Core-First — 10-Section Structure)
 
 Use this template for each `core-docs/chNN_<feature_name>.md`. Adapt content to the specific feature.
+
+**IMPORTANT**: Every chapter MUST have all 10 sections. If a section doesn't apply to this
+feature, include it with: "N/A — this feature does not involve [topic]" and a brief explanation.
 
 ---
 
 ```markdown
 # Chapter N: [Feature Name]
 
-> Line references based on commit `<short-hash>` of the [Framework Name] repository.
+> Line references based on commit `<short-hash>` of the [Project Name] repository ([Source Language]).
 
 ## Build Challenge
 
@@ -31,12 +34,11 @@ subsystems connect. Show the code before any supporting pieces exist.]
 // This references classes/interfaces that don't exist yet — that's intentional
 ```
 
-[After the code, state the DIRECTION — what this integration point tells us we need to build:]
-
-Two key decisions here:
-
-1. [Why was this integration point chosen over alternatives?]
-2. [What design constraint does it introduce?]
+> ★ **Insight** -------------------------------------------
+> - **Why this integration point?** [Why was this seam chosen over alternatives?]
+> - **Trade-off:** [What design constraint does it introduce?]
+> - **Recommend:** [When this integration pattern is appropriate vs. alternatives]
+> -----------------------------------------------------------
 
 This [connects Subsystem A to Subsystem B]. To make it work, we need to build:
 - [Component X — what it does]
@@ -62,9 +64,17 @@ public class NewClass {
 }
 ```
 
+> ★ **Insight** -------------------------------------------
+> - **Why [design decision]?** [Rationale]
+> - **Trade-off:** [What was simplified vs the source project]
+> - **Recommend:** [When to use this approach]
+> -----------------------------------------------------------
+
 ## N.3 [Second Supporting Component]
 
 [Continue building. Each sub-section adds one piece of the solution.]
+
+[Add ★ Insight blocks at major design decision points]
 
 ## N.4 Try It Yourself
 
@@ -143,30 +153,104 @@ class FeatureIntegrationTest {
 
 [Explain the design decisions AFTER the reader has seen and run the code.]
 
-> ★ **Insight** ─────────────────────────────────
-> - [Why this design decision is a best practice]
-> - [What alternatives were considered and why they fall short]
-> - [When this pattern should NOT be used]
-> ─────────────────────────────────────────────────
+> ★ **Insight** -------------------------------------------
+> - **Why [core design decision]?** [Deep rationale with alternatives considered]
+> - **Trade-off:** [What was sacrificed, downsides, when this choice might be wrong]
+> - **Recommend:** [For the learner: when to use this approach in real projects]
+> - **Where:** [→ src/path/File.java — methodName]
+> - **When:** [During init? Runtime?]
+> - **How to verify:** [Test or check that confirms understanding]
+> -----------------------------------------------------------
 
-[Optional: additional insight blocks, up to 3 total per chapter]
+[1-3 insight blocks. Focus on WHY the design works, not WHAT the code does.
+Topics should cover:
+- Integration point choice justification
+- Simplification decision reasoning
+- Pattern selection rationale
+- How the source project handles this differently and why]
 
 ## N.7 What We Enhanced
 
-[Mandatory for all chapters after ch01. Skip for ch01.]
+[Mandatory for all chapters after ch01. For ch01, show foundation table.]
 
-| Aspect    | Before (chNN)             | Current (this chapter)      | Real Framework                                |
+{{FOR CHAPTER 1:}}
+
+**Foundation established.** This chapter created the core that future features build on:
+
+| Component | What Was Created | Purpose |
+|-----------|-----------------|---------|
+| [component] | [what was built] | [why it exists] |
+
+{{FOR CHAPTER 2+: This table is MANDATORY.}}
+
+| Aspect    | Before (chNN)             | Current (this chapter)      | Source Project                                |
 |-----------|---------------------------|-----------------------------|-----------------------------------------------|
 | [Concern] | [Previous simplification] | [What this chapter improved] | [Production approach with `File.java:line`]  |
 
-## N.8 Connection to Real Framework
+## N.8 Connection to Source Project
 
-| Simplified Code  | Real Framework Code | File:Line           | Key Difference                  |
-|------------------|---------------------|---------------------|---------------------------------|
-| `SimpleClass`    | `RealClass`         | `RealClass.java:42` | [What the real version adds]    |
-| `simpleMethod()` | `realMethod()`      | `RealClass.java:108`| [What the real version handles] |
+| Simplified Java Code  | Source Project Code ([Language]) | File:Line           | Key Difference                  |
+|-----------------------|---------------------------------|---------------------|---------------------------------|
+| `SimpleClass`         | `SourceType`                    | `source_file:42`    | [What the source version adds]  |
+| `simpleMethod()`      | `source_func()`                 | `source_file:108`   | [What the source version handles] |
 
-## N.9 Complete Code
+{{FOR non-Java source projects, add Technology Mapping:}}
+
+**Technology Mapping ([Source Language] → Java):**
+
+| Source Construct | Java Equivalent | Why This Mapping |
+|-----------------|----------------|------------------|
+| [e.g., `@app.route` decorator] | [e.g., `@Route` annotation + `RouteRegistry`] | [Preserves declarative routing pattern] |
+| [e.g., goroutine] | [e.g., `ExecutorService.submit()`] | [Lightweight concurrency → thread pool] |
+
+Verified against commit: `<short-hash>`
+
+## N.9 Architecture Visualization
+
+<!-- diagram: ch{{NN}}_{{feature_slug}}_integration -->
+```mermaid
+flowchart TD
+    subgraph "Existing System"
+        CORE["Core Component"]
+    end
+    subgraph "New: [Feature Name]"
+        NEW1["[New Component 1]"]
+        NEW2["[New Component 2]"]
+    end
+    CORE -->|"integration point"| NEW1
+    NEW1 -->|"uses"| NEW2
+    style CORE fill:#4ecdc4,color:#fff
+    style NEW1 fill:#45b7d1,color:#fff
+    style NEW2 fill:#45b7d1,color:#fff
+```
+
+{{Additional diagrams as needed:}}
+
+{{FOR features with complex execution flows:}}
+<!-- diagram: ch{{NN}}_{{feature_slug}}_flow -->
+```mermaid
+sequenceDiagram
+    participant APP as Application
+    participant CORE as Core
+    participant NEW as New Feature
+    APP->>CORE: [trigger]
+    CORE->>NEW: [integration call]
+    NEW-->>CORE: [result]
+    CORE-->>APP: [response]
+```
+
+{{FOR features with lifecycle/state changes:}}
+<!-- diagram: ch{{NN}}_{{feature_slug}}_lifecycle -->
+```mermaid
+stateDiagram-v2
+    [*] --> Created
+    Created --> Initialized
+    Initialized --> Running
+    Running --> Destroyed
+    Destroyed --> [*]
+```
+
+## N.10 Complete Code
 
 [ALL files created or modified in this chapter, shown in full.]
 [This section is generated by READING BACK the actual source files from src/.]
@@ -215,32 +299,18 @@ class FeatureIntegrationTest {
 
 ---
 
-## Template Usage Notes
+## Template Rules
 
-### Build Challenge Guidelines
-- **Current State**: Refer to the concrete output of the previous chapter (or "No simplified framework exists yet" for ch01)
-- **Limitation**: State a specific, testable problem — not a vague learning goal
-- **Objective**: Use a verb phrase describing what the reader will BUILD
-- **Keep it to ONE row** — if you need multiple rows, the chapter covers too much
-
-### Code Modification Tracking
-When modifying files from prior features, ALWAYS:
-1. State which file is being modified
-2. Describe the change briefly
-3. Show the new/changed code
-4. In the Complete Code chapter, show the FULL file (not just the diff)
-
-### Complete Code Chapter Rules
-- Generated by reading actual files from `src/`, not written independently
-- Must include EVERY file that was created or modified in this chapter
-- Each file is marked `[NEW]` or `[MODIFIED]`
-- Files are shown in full — no partial snippets
-- Includes both `src/main/java/` and `src/test/java/` files
-- If the reader copies all `[NEW]` files and replaces all `[MODIFIED]` files, the project must compile and all tests must pass
-
-### Insight Block Guidelines
-- **Placement:** ONLY in the "Why This Works" section
-- **Frequency:** 1-3 per chapter
-- **Focus:** "Why" not "what" — the chapter already shows what
-- **Include trade-offs:** Mention when the pattern is NOT the right choice
-- **Connect to real world:** Reference how the actual framework uses the same principle
+1. **All 10 sections**: Every chapter has N.1 through N.10. Mark inapplicable sections "N/A — this feature does not involve [topic]" rather than omitting.
+2. **Build Challenge**: ONE row only. Current state → Limitation → Objective.
+3. **Integration point comes FIRST**: Show the exact code where this feature connects, then state direction.
+4. **★ Insight blocks at decision points**: In N.1-N.3 (implementation) AND N.6 (Why This Works), with minimum Why + Trade-off + Recommend.
+5. **Code before explanation**: Show the code, then explain what it does and why.
+6. **File annotations**: Every code block header states the file path and `[NEW]` or `[MODIFIED]`.
+7. **Modified files**: State the file, describe the change, show the specific change.
+8. **Complete Code**: Generated by reading actual `src/` files. Must match reality exactly.
+9. **Architecture Visualization (N.9)**: At least one Mermaid diagram per chapter, using standardized color palette and `<!-- diagram: slug -->` markers.
+10. **What We Enhanced (N.7)**: Foundation table for ch01. MANDATORY enhancement table for ch02+.
+11. **Copy-paste guarantee**: If reader copies `[NEW]` files and replaces `[MODIFIED]` files, the project compiles and all tests pass.
+12. **Mermaid diagrams**: Use standardized 7-color palette, `<!-- diagram: slug -->` comment markers, labeled arrows, subgraphs for logical grouping.
+13. **Emoji markers**: 🔑 Essential, ⚠️ Pitfall, 🚫 Constraint, ★ Insight, 🔗 Integration point — used consistently.
