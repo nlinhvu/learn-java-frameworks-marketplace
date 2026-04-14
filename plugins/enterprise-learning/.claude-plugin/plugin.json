@@ -1,0 +1,10 @@
+{
+  "name": "enterprise-learning",
+  "description": "Re-implement any source project (any language, including Java) into enterprise-grade Java for learning — includes enterprise-blueprint (outline planning with project type classification) and enterprise-builder (feature implementation with rich tutorials) skills, powered by specialized agents for multi-language source exploration, enterprise architecture design, and quality review with rich Mermaid visualization and Insight blocks",
+  "version": "1.0.0",
+  "author": {
+    "name": "nlinhvu"
+  },
+  "license": "Apache-2.0",
+  "keywords": ["java", "enterprise", "spring-boot", "learning", "re-implementation", "tutorial", "visualization", "multi-language"]
+}

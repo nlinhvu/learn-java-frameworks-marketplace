@@ -7,7 +7,7 @@ Thank you for your interest in contributing! This marketplace helps developers l
 ### Reporting Issues
 
 - Use [GitHub Issues](https://github.com/nlinhvu/learn-java-frameworks-marketplace/issues) to report bugs or suggest improvements
-- Include which plugin (`api-learning` or `core-learning`) is affected
+- Include which plugin (`api-learning`, `core-learning`, or `enterprise-learning`) is affected
 - Provide the framework you were analyzing and the steps to reproduce
 
 ### Submitting Changes
