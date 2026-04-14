@@ -1,10 +1,12 @@
 {
   "name": "core-learning",
-  "description": "Analyze Java frameworks inside-out and build simplified versions with progressive learning — includes core-blueprint (outline planning) and core-builder (feature implementation) skills, powered by specialized agents for framework exploration, architecture design, and code review",
+  "description": "Analyze any project's internals (Python, Go, Rust, Node.js, C#, Ruby, Java, etc.) inside-out and build simplified Java reimplementations with progressive learning — includes core-blueprint (outline planning with Mermaid visualizations) and core-builder (feature implementation with 10-section tutorials, structured Insight blocks, and architecture diagrams) skills, powered by specialized agents for source code exploration, architecture design, and quality review with confidence scoring",
   "version": "1.0.0",
   "author": {
     "name": "nlinhvu"
   },
   "license": "Apache-2.0",
-  "keywords": ["java", "framework", "learning", "tutorial", "simplified", "core-first"]
+  "keywords": ["java", "reimplementation", "any-language", "learning", "tutorial", "simplified", "core-first", "cross-language"],
+  "skills": ["core-blueprint", "core-builder"],
+  "agents": ["core-code-explorer", "core-code-architect", "core-code-reviewer"]
 }

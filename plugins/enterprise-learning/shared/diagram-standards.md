@@ -6,10 +6,10 @@ Apply these `style` directives consistently across ALL Mermaid diagrams:
 
 | Color | Hex | Use For |
 | --- | --- | --- |
-| Teal | `fill:#4ecdc4,color:#fff` | Input / UI layer |
-| Blue | `fill:#45b7d1,color:#fff` | Business logic / core domain |
-| Purple | `fill:#bb8fce,color:#fff` | Data layer / persistence |
-| Orange | `fill:#f39c12,color:#fff` | Infrastructure / operations |
+| Teal | `fill:#4ecdc4,color:#fff` | Entry point / public surface (controllers, REST endpoints, public API) |
+| Blue | `fill:#45b7d1,color:#fff` | Internal logic / core domain (services, business rules, processing) |
+| Purple | `fill:#bb8fce,color:#fff` | Deep internals / persistence (repositories, data access, infrastructure internals) |
+| Orange | `fill:#f39c12,color:#fff` | Configuration / operations (Spring config, Docker, deployment) |
 | Red | `fill:#ff6b6b,color:#fff` | Error / critical paths |
 | Green | `fill:#27ae60,color:#fff` | Success / output / chosen option |
 | Yellow | `fill:#f7dc6f,color:#333` | External systems / third-party |

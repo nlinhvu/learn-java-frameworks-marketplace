@@ -1,6 +1,6 @@
 # Learn Java Frameworks Marketplace
 
-A curated collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugins for learning Java frameworks by building simplified versions from source code — or by re-implementing any project into enterprise-grade Java. Each plugin combines specialized skills, agents, and reference templates to guide you through analyzing real framework internals and reimplementing them as working, tested code with tutorial documentation.
+A curated collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugins for learning Java by analyzing real-world projects in **any language** (Python, Go, Rust, Node.js, C#, Ruby, Java, etc.) and building simplified Java reimplementations. Each plugin combines specialized skills, agents, and reference templates to guide you through analyzing source code internals and reimplementing them as working, tested Java code with progressive, code-first tutorial documentation.
 
 ## ⚠️🔥 Warning: High Token Usage 🔥⚠️
 
@@ -86,16 +86,16 @@ Or browse and install interactively via `/plugin` → **Discover** tab.
 
 ## Prerequisites
 
-- Java 17+
+- Java 17+ (Java 21+ recommended for enterprise-learning)
 - Maven or Gradle
-- A locally cloned Java framework/library repository (for api-learning and core-learning), or any source project in any language (for enterprise-learning)
+- A locally cloned source project repository (any language — Python, Go, Rust, Node.js, C#, Ruby, Java, etc.)
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
 
 ## Plugins
 
 ### API Learning -- Outside-In Approach
 
-Learn frameworks starting from the **public API surface** and tracing inward through implementation layers. You build vertical slices: pick an API capability (e.g., "Handle HTTP GET Requests"), understand how it's implemented, then reimplement it with tests and a tutorial.
+Learn by starting from the **public API surface** of any source project and tracing inward through implementation layers. You build vertical slices: pick an API capability (e.g., "Handle HTTP GET Requests"), understand how it's implemented in the source language, then reimplement it as simplified Java with tests and a tutorial.
 
 **Skills:**
 
@@ -114,7 +114,7 @@ Learn frameworks starting from the **public API surface** and tracing inward thr
 
 ### Core Learning -- Inside-Out Approach
 
-Learn frameworks starting from the **internal core** and building outward. You start from the framework's "heart" (e.g., the IoC container in Spring) and progressively add layers until you reach the public API.
+Learn by starting from the **internal core** of any source project and building outward. You start from the project's "heart" (e.g., the IoC container in Spring, the Router in Gin) and progressively add layers until you reach the public API.
 
 **Skills:**
 
@@ -154,7 +154,7 @@ Re-implement any source project (Go, Python, Rust, Node.js, C#, Ruby, Java/Quark
 
 All three plugins follow a two-step workflow:
 
-**Step 1 -- Blueprint.** Point the blueprint skill at a locally cloned Java framework. It analyzes the source code using specialized explorer agents, produces an architecture overview, and generates a prioritized learning outline with a dependency graph.
+**Step 1 -- Blueprint.** Point the blueprint skill at a locally cloned source project (any language). It analyzes the source code using specialized explorer agents, produces an architecture overview, and generates a prioritized learning outline with a dependency graph.
 
 **Step 2 -- Build.** Pick a feature from the outline and run the builder skill. It designs a simplified implementation using architect agents, writes Java source code and tests that compile and pass, generates a tutorial chapter, and validates everything with reviewer agents.
 
@@ -188,6 +188,11 @@ plugins/
       api-code-explorer.md      # API surface analysis agent
       api-code-architect.md     # Vertical slice design agent
       api-code-reviewer.md      # Quality validation agent
+    shared/                     # Cross-cutting standards
+      diagram-standards.md      # Mermaid color palette and diagram rules
+      insight-format.md         # Insight block template and rules
+      quality-checklist.md      # Reviewer rubric and review loop protocol
+      technology-defaults.md    # Default Java stack and conventions
     README.md
     LICENSE
   core-learning/                # Inside-out learning plugin
@@ -204,6 +209,11 @@ plugins/
       core-code-explorer.md     # Core analysis agent
       core-code-architect.md    # Component design agent
       core-code-reviewer.md     # Quality validation agent
+    shared/                     # Cross-cutting standards
+      diagram-standards.md      # Mermaid color palette and diagram rules
+      insight-format.md         # Insight block template and rules
+      quality-checklist.md      # Reviewer rubric and review loop protocol
+      technology-defaults.md    # Default Java stack and conventions
     README.md
     LICENSE
   enterprise-learning/          # Any-language-to-Java learning plugin

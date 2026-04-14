@@ -3,11 +3,13 @@ name: enterprise-blueprint
 version: 1.0.0
 description: >
   "analyze this project for enterprise Java", "enterprise blueprint for X", "enterprise-blueprint",
-  "re-implement this in Java", "create an enterprise learning outline", "map this project to Java",
-  "classify this project" — this skill analyzes a source project (any language, including Java)
-  for enterprise Java re-implementation. Classifies as Application/Library/Framework, produces
-  enterprise-outline.md, technology-mapping.md, deviation-report.md, and a buildable Maven
-  project skeleton with Mermaid visualizations and Insight blocks.
+  "re-implement this in enterprise Java", "create an enterprise learning outline",
+  "map this project to enterprise Java", "classify this project", "Spring Boot version of X",
+  "production-grade Java reimplementation", "enterprise-grade Java" — this skill analyzes a
+  source project (any language, including Java) for enterprise Java re-implementation. Classifies
+  as Application/Library/Framework, produces enterprise-outline.md, technology-mapping.md,
+  deviation-report.md, and a buildable Maven project skeleton with Mermaid visualizations and
+  Insight blocks.
 allowed-tools:
   - Read
   - Write

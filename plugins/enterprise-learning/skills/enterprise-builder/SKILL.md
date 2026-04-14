@@ -2,12 +2,13 @@
 name: enterprise-builder
 version: 1.0.0
 description: >
-  "implement <feature name>", "build the <feature>", "next feature", "next enterprise feature",
-  "implement the next feature", "continue building", "enterprise-builder" — this skill implements
-  a specific feature from an enterprise-outline.md. Produces working enterprise Java source code
-  (Spring Boot 4 for applications, plain Java 21+ for libraries/frameworks), tests (Testcontainers
-  for applications, plain JUnit for libraries/frameworks), and a 10-section tutorial chapter with
-  Mermaid diagrams and Insight blocks, all verified to compile and pass.
+  "implement enterprise feature <name>", "build the enterprise <feature>", "next enterprise feature",
+  "next enterprise", "continue building enterprise", "enterprise-builder" — this skill implements
+  a specific feature from an enterprise-outline.md (requires enterprise-outline.md in the project).
+  Produces working enterprise Java source code (Spring Boot 4 for applications, plain Java 21+
+  for libraries/frameworks), tests (Testcontainers for applications, plain JUnit for
+  libraries/frameworks), and a 10-section tutorial chapter with Mermaid diagrams and Insight
+  blocks, all verified to compile and pass.
 allowed-tools:
   - Read
   - Write
@@ -53,7 +54,7 @@ The user provides a feature name matching an entry in `enterprise-outline.md`:
 /enterprise-builder "User Authentication"
 ```
 
-If the user says "next feature" or similar without specifying a name, the skill automatically selects the next unimplemented feature from `enterprise-outline.md`.
+If the user says "next enterprise feature", "next enterprise", or similar without specifying a name, the skill automatically selects the next unimplemented feature from `enterprise-outline.md`.
 
 ## Workflow
 
@@ -61,7 +62,7 @@ If the user says "next feature" or similar without specifying a name, the skill 
 
 1. Find `enterprise-outline.md` in the project
 2. **If a feature name is provided**, match it to an entry in the outline. If no match, report an error and list available features.
-3. **If no feature name is provided** (e.g., user said "next feature"), scan `enterprise-outline.md` for the first feature still marked ⬜ whose dependencies are all ✅. Use that as the target feature. If all features are ✅, tell the user the outline is complete.
+3. **If no feature name is provided** (e.g., user said "next enterprise feature" or "next enterprise"), scan `enterprise-outline.md` for the first feature still marked ⬜ whose dependencies are all ✅. Use that as the target feature. If all features are ✅, tell the user the outline is complete.
 4. Check that all dependency features are marked ✅
 5. If dependencies are missing, stop and tell the user which features must be implemented first
 6. Identify the project type (Application/Library/Framework) from the outline header

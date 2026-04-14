@@ -2,33 +2,52 @@
 name: api-builder
 version: 1.0.0
 description: >
-  This skill should be used when the user asks to "api-builder", "implement <feature name>", "build the
-  <feature> API", "next feature", "next api", "next api feature", or any request to implement a vertical
-  slice from an API-first learning outline. Implements a specific API capability from an api-blueprint outline,
-  generating working Java source code, client-perspective and internal tests, and a code-first tutorial chapter —
-  all verified to compile and pass. Requires a feature name argument matching an entry in api-outline.md.
+  "implement api feature <name>", "build the <feature> API", "next api feature", "next api",
+  "continue building api", "api-builder" —
+  this skill implements a specific API capability from an api-blueprint outline (requires
+  api-outline.md in the project). Source project can be any language. Generates working
+  simplified Java source code, client-perspective and internal tests, and a 10-section
+  tutorial chapter with Mermaid diagrams and ★ Insight blocks, all verified to compile and pass.
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+  - Agent
+file_references:
+  - shared/diagram-standards.md
+  - shared/insight-format.md
+  - shared/quality-checklist.md
+  - shared/technology-defaults.md
 ---
 
 # API Builder — API-First Implementation
 
 ## Philosophy: API Contract First, Then Implement Inward
 
-Each feature is a **vertical slice** — a single API capability traced from the public surface
-down through every internal layer needed to make it work. The implementation follows the
-same direction a contributor would: "I see the API, I want to understand how it works, so
-I trace the code from the public method inward."
+Each feature is a **vertical slice** — a single API capability traced from the source project's
+public surface down through every internal layer needed to make it work. The source project
+can be in any language (Python, Go, Rust, Node.js, C#, Ruby, Java, etc.), but the output is
+always a **simplified Java reimplementation**. The implementation follows the same direction a
+contributor would: "I see the API, I want to understand how it works, so I trace the code from
+the public method inward."
 
 This produces two artifacts, one truth:
-1. **Real Java code** in `src/` — compiles, tests pass, is the source of truth
-2. **Tutorial chapter** in `api-docs/` — reads back the actual source files, never diverges
+1. **Working Java code** in `src/` — compiles, tests pass, is the source of truth
+2. **Rich tutorial chapter** in `api-docs/` — reads back actual source files, never diverges, enriched with ★ Insight blocks and Mermaid diagrams at every design decision
+
+Every simplification choice, layer boundary, technology mapping decision, and API design decision is a teaching moment. The learner doesn't just see WHAT was built — they understand WHY each choice was made and what alternatives were considered.
 
 ## MANDATORY: Use Extended Thinking
 
-**Use extended thinking before implementing.** The quality of the vertical slice depends on deep upfront reasoning about both the real framework and the simplified version. Before writing any code:
+**Use extended thinking before implementing.** The quality of the vertical slice depends on deep upfront reasoning about both the source project and the simplified Java version. Before writing any code:
 
-- Study the real framework's API contract and its full call chain from surface to internals
-- Design the public API class/interface — method signatures, parameter types, return types
+- Study the source project's API contract and its full call chain from surface to internals (in any language)
+- Design the simplified Java public API class/interface — method signatures, parameter types, return types
 - Plan the depth layers — which layers this feature needs and what to simplify at each
+- Map source language concepts to Java equivalents (e.g., Python decorators to annotations, Go channels to queues)
 - Determine what to reuse and extend from prior features' internals
 - Design the client-perspective tests that will define the API's behavioral contract
 
@@ -41,7 +60,7 @@ The user provides a feature name matching an entry in `api-outline.md`:
 /api-builder "Handle HTTP GET Requests"
 ```
 
-If the user says "next feature", "next api", or similar without specifying a name, the skill
+If the user says "next api feature", "next api", or similar without specifying a name, the skill
 automatically selects the next unimplemented feature from `api-outline.md`.
 
 ## Workflow
@@ -50,48 +69,51 @@ automatically selects the next unimplemented feature from `api-outline.md`.
 
 1. Find `api-outline.md` in the project
 2. **If a feature name is provided**, match it to an entry in the outline. If no match, report an error and list available features.
-3. **If no feature name is provided** (e.g., user said "next feature" or "next api"), scan `api-outline.md` for the first feature still marked ⬜ whose dependencies are all ✅. Use that as the target feature. If all features are ✅, tell the user the outline is complete.
+3. **If no feature name is provided** (e.g., user said "next api feature" or "next api"), scan `api-outline.md` for the first feature still marked ⬜ whose dependencies are all ✅. Use that as the target feature. If all features are ✅, tell the user the outline is complete.
 4. Check that all dependency features are marked ✅
 5. If dependencies are missing, stop and tell the user which features must be implemented first
 
-### Step 2: Study the Real Framework Source (Agent-Powered)
+### Step 2: Study the Real Source Project (Agent-Powered)
 
-**Dispatch an `api-learning:api-code-explorer` agent** to deeply analyze the real framework's implementation of this API capability.
+**Dispatch an `api-learning:api-code-explorer` agent** to deeply analyze the source project's implementation of this API capability. The source project may be in any language.
 
 Example prompt:
 ```
-Analyze the <feature-name> API capability in the framework at <framework-path>.
-Focus on the files mapped in the outline: <maps-to list>
-Start with the public API class — its method signatures, parameter types, return types.
+Analyze the <feature-name> API capability in the project at <project-path>.
+Source language: <language>. Focus on the files mapped in the outline: <maps-to list>
+Start with the public API class/function — its signatures, parameter types, return types.
 Then trace the call chain inward through each depth layer listed in the outline.
 Identify: API contract, dispatch logic, processing logic, infrastructure (if applicable).
+Note any language-specific patterns that need Java equivalents.
 Provide file:line references for the mapping table.
 ```
 
-While the explorer agent runs, record the framework repo's commit hash:
+While the explorer agent runs, record the source project repo's commit hash:
 ```bash
-git -C <framework-path> rev-parse --short HEAD
+git -C <project-path> rev-parse --short HEAD
 ```
 
 After the agent returns, read the essential files it identifies to build your own understanding.
 
 ### Step 3: Plan the Vertical Slice (Agent-Powered)
 
-**Dispatch an `api-learning:api-code-architect` agent** to design the vertical slice implementation based on the explorer's findings.
+**Dispatch an `api-learning:api-code-architect` agent** to design the simplified Java vertical slice implementation based on the explorer's findings.
 
 Example prompt:
 ```
-Design a vertical slice implementation of <feature-name> for the simple-<framework> project.
-Real framework analysis: <paste explorer findings>
-Existing simplified code: <list prior features' key files>
+Design a simplified Java vertical slice implementation of <feature-name> for the simple-<project> project.
+Source project language: <language>. Source project analysis: <paste explorer findings>
+Existing simplified Java code: <list prior features' key files>
 Outline entry: <paste the feature's outline entry including depth layers>
-Produce: API contract, client test plan, depth layer implementations, build sequence (top-down).
+Produce: Java API contract, client test plan, depth layer implementations, build sequence (top-down).
+Include technology mapping for any source-language-specific concepts.
 ```
 
 The architect agent will deliver:
-- **API contract**: The public class/interface with method signatures and usage example
+- **API contract**: The simplified Java public class/interface with method signatures and usage example
 - **Simplification decisions**: Per-layer choices (keep, merge, skip, hardcode)
-- **Class mapping**: Real framework classes → simplified classes organized by depth layer
+- **Class mapping**: Source project classes/functions → simplified Java classes organized by depth layer
+- **Technology mapping**: Source language concepts → Java equivalents (if cross-language)
 - **Build sequence**: Top-down implementation order (API contract → client tests → layers)
 - **Test plan**: Client-perspective tests and internal unit tests
 
@@ -213,50 +235,45 @@ shared internal component in a way that breaks a previous API's contract. Fix it
 
 Example prompt:
 ```
-Review the <feature-name> implementation (ch<NN>) in the simple-<framework> project at <path>.
+Review the <feature-name> implementation (ch<NN>) in the simple-<project> project at <path>.
 Feature outline entry: <paste outline entry>
-Real framework source: <framework-path>
+Source project: <project-path> (language: <language>)
 Files created/modified: <list files>
 Check: API contract correctness, vertical slice completeness, client test quality,
-internal test coverage, progressive enhancement integrity.
+internal test coverage, technology mapping accuracy, progressive enhancement integrity.
 Run ./mvnw test to verify all tests pass.
 ```
 
-The reviewer will check:
-- API contract mirrors the real framework's public interface
-- Vertical slice is complete — every depth layer is implemented
-- Client-perspective tests cover the behavioral contract
-- Internal tests cover non-trivial logic
-- Prior features' tests still pass
-- Code is ready for tutorial documentation
+**Review loop orchestration** (you, the skill, drive this loop — not the reviewer agent):
+1. Dispatch the reviewer agent and read its findings
+2. If Critical issues exist (confidence >= 90): fix them, then re-dispatch the reviewer
+3. If only Important issues remain (80-89): fix them and proceed to Step 10
+4. Stop re-dispatching when: no Critical/High issues remain, OR 5 review passes completed, OR only subjective issues remain
 
-**If the reviewer finds critical issues (confidence >= 90):** fix them before proceeding.
-**If only important issues (80-89):** fix what improves educational quality, note the rest.
+For the full rubric and stop criteria, see [shared/quality-checklist.md](shared/quality-checklist.md).
 
 ### Step 10: Write the Tutorial Chapter
 
-Read [references/tutorial-template.md](references/tutorial-template.md) for the exact template.
+Read [references/tutorial-template.md](references/tutorial-template.md) and follow each section's rules. Refer to [shared/diagram-standards.md](shared/diagram-standards.md) for Mermaid color palette and [shared/insight-format.md](shared/insight-format.md) for ★ Insight block format.
 
-The chapter follows the API-first flow:
-1. The API Contract — what the client sees
-2. Client Usage & Tests — how to use it and verify it works
-3. Implementing the Call Chain — building each layer top-down
-4. Internal Tests — targeted tests for internal components
-5. Try It Yourself — challenges
-6. Why This Works — insights
-7. What We Enhanced — progression tracking
-8. Connection to Real Framework — source mapping
-9. Complete Code — ALL files, read back from `src/`
+Write all **10 sections** following this structure:
+1. **N.1 The API Contract** — what clients will call, with usage example
+2. **N.2 Client Tests** — behavior specification from consumer's perspective
+3. **N.3 Implementing the Call Chain** — building each layer top-down, with ★ Insight blocks at each decision point
+4. **N.4 Internal Tests** — targeted tests for internal components
+5. **N.5 Try It Yourself** — challenges in collapsible `<details>` blocks
+6. **N.6 Why This Works** — ★ Insight blocks (1-3 per chapter, minimum Why + Trade-off + Recommend)
+7. **N.7 What We Enhanced** — ch01: "Foundation established" summary; ch02+: mandatory enhancement table
+8. **N.8 Connection to Source Project** — source mapping with file:line references, commit hash, and technology mapping (source language → Java)
+9. **N.9 Architecture Visualization** — Mermaid diagrams for this feature's vertical slice
+10. **N.10 Complete Code** — read back every source file created or modified from actual `src/`; include full content; mark each file `[NEW]` or `[MODIFIED]`
 
-### Step 11: Generate Complete Code Section
-
-Read back every source file created or modified in this feature from `src/`.
-Include the full content. Mark each file `[NEW]` or `[MODIFIED]`.
+End the chapter with a Summary table and "Next chapter" pointer per the tutorial template.
 
 This is the "copy-paste guarantee" — if a reader copies all `[NEW]` files and
 replaces all `[MODIFIED]` files, the project must compile with all tests passing.
 
-### Step 12: Update the Outline
+### Step 11: Update the Outline
 
 In `api-outline.md`, change the feature's status from `⬜` to `✅`.
 
@@ -270,18 +287,18 @@ solely as internal infrastructure.
 ### The Reuse Rule
 Later features REUSE and EXTEND internals from earlier features. When Feature 3's call
 chain needs a dispatcher, and Feature 1 already built one, Feature 3 extends it rather
-than building a new one. This mirrors how real frameworks grow.
+than building a new one. This mirrors how real projects grow.
 
 ### The Depth Rule
 Not every feature needs every layer. Some APIs are thin (API → Processing, no dispatch).
-Some are deep (API → Dispatch → Processing → Infrastructure). Let the real framework's
+Some are deep (API → Dispatch → Processing → Infrastructure). Let the source project's
 call chain determine the depth.
 
 ### The Simplification Rule
 At each depth layer, implement the **minimum** that makes the API work correctly:
 - Hard-code what can be made configurable later
 - Support only the happy path
-- Use JDK built-in types where the real framework has custom types
+- Use JDK built-in types where the source project has custom types
 - Defer performance optimizations entirely
 
 Each later feature can enhance earlier layers. The "What We Enhanced" table tracks this
@@ -302,6 +319,8 @@ See [references/techniques.md](references/techniques.md) for detailed patterns a
 
 ## Quality Checklist
 
+Quick-reference checklist. For the full reviewer rubric with confidence scoring and review loop protocol, see [shared/quality-checklist.md](shared/quality-checklist.md).
+
 Before finalizing, verify:
 
 ### Code
@@ -314,21 +333,20 @@ Before finalizing, verify:
 - [ ] Modified files from prior features are tracked
 
 ### Tutorial
+- [ ] All 10 sections present (N.1 through N.10)
 - [ ] Opens with Build Challenge table (Current State / Limitation / Objective)
 - [ ] N.1 shows the API Contract — what clients will call, with usage example
 - [ ] N.2 shows Client Tests — test-as-specification, written before implementation
-- [ ] N.3 implements the Call Chain top-down (API → Dispatch → Processing → Infrastructure)
+- [ ] N.3 implements the Call Chain top-down with ★ Insight blocks at design decision points
 - [ ] Code sections (N.1–N.4) appear BEFORE all explanation sections (N.5+)
-- [ ] Has "Try It Yourself" section with `<details>` challenges
-- [ ] Has Internal Tests section (N.4) for non-trivial internal components
-- [ ] Test method names describe behavior: `should<X>_When<Y>`
-- [ ] Has "Why This Works" with 1-3 `★ Insight` blocks
-- [ ] Has "What We Enhanced" table (if not ch01) with at least one enhancement row
-- [ ] Has "Connection to Real Framework" with file:line references and commit hash
-- [ ] Has "Complete Code" chapter showing ALL files (production + test), matching `src/` exactly
-- [ ] Summary table and "Next chapter" preview at bottom
+- [ ] N.5 has collapsible `<details>` challenges
+- [ ] N.6 has 1-3 ★ Insight blocks with Why + Trade-off + Recommend
+- [ ] N.7 has enhancement table (ch02+) or foundation summary (ch01)
+- [ ] N.8 has Connection to Source Project with file:line references, commit hash, and technology mapping
+- [ ] N.9 has Mermaid diagrams with standard color palette and `<!-- diagram: -->` markers
+- [ ] N.10 has all files read from `src/`, marked `[NEW]`/`[MODIFIED]`
+- [ ] Copy-paste guarantee: copying files produces a compiling, passing project
 - [ ] All modifications to prior features' files are explicitly declared with diffs
-- [ ] Line references verified against the actual source at the recorded commit
 
 ## Output Summary
 
@@ -336,4 +354,5 @@ When done, tell the user:
 1. Which feature was implemented and its chapter number
 2. Test results — all tests passing (both new and prior features)
 3. Where the tutorial is: `api-docs/chNN_<feature_name>.md`
-4. Suggest the next feature from the outline: "Run `/api-builder "<next feature>"`"
+4. Key design decisions made (brief)
+5. Suggest the next feature from the outline: "Run `/api-builder "<next feature>"`"

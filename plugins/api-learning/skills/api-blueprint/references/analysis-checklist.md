@@ -1,25 +1,40 @@
-# Framework Analysis Checklist (API-First)
+# Project Analysis Checklist (API-First)
 
-Use this checklist to systematically analyze a framework's source code from the outside in.
+Use this checklist to systematically analyze a source project's code from the outside in.
+The source project can be in any language (Python, Go, Rust, Node.js, C#, Ruby, Java, etc.).
 The order matters — start with what clients see, then trace inward.
+
+## Phase 0: Technology Identification
+
+### 0.1 Source Language & Stack
+- [ ] What programming language is the project written in?
+- [ ] What language version/runtime is required?
+- [ ] What build/package system is used? (pip/poetry, go.mod, Cargo.toml, package.json, NuGet, Gemfile, Maven/Gradle, etc.)
+- [ ] What key frameworks/libraries does it depend on?
+- [ ] What language-specific patterns will need Java equivalents? (decorators, async/await, goroutines, traits, channels, generators, etc.)
+
+### 0.2 Technology Mapping (Source → Java)
+- [ ] Which source language concepts map directly to Java? (classes → classes, interfaces → interfaces)
+- [ ] Which concepts need adaptation? (Python decorators → Java annotations, Go channels → Java queues, etc.)
+- [ ] Which concepts have no direct Java equivalent and need creative solutions? (Rust ownership, Python generators, etc.)
 
 ## Phase 1: The API Surface (what clients touch)
 
 ### 1.1 Published Artifacts
-- [ ] What Maven/Gradle modules get published? Which is the "client" module?
-- [ ] Is there a separate `-api` or `-core` artifact vs. `-impl`?
-- [ ] What does `module-info.java` export? (Java 9+)
+- [ ] What packages/modules/crates/gems get published? Which is the "client" module?
+- [ ] Is there a separate API/core artifact vs. implementation?
+- [ ] What does the module system export? (Python `__init__.py`, Go package exports, Rust `pub`, Java `module-info.java`, etc.)
 
-### 1.2 Public API Classes
-- [ ] Which classes/interfaces are in the top-level or `api/` package?
-- [ ] Which classes appear in README examples and "Getting Started" guides?
-- [ ] Which classes have `@Public`, `@API`, or are documented as stable?
-- [ ] Which classes are imported in integration tests and example projects?
+### 1.2 Public API Elements
+- [ ] Which classes/functions/types are in the top-level or public package?
+- [ ] Which elements appear in README examples and "Getting Started" guides?
+- [ ] Which elements are documented as public/stable API?
+- [ ] Which elements are imported in integration tests and example projects?
 
 ### 1.3 Entry Points
-- [ ] What's the first thing a user creates? (`new Builder()`, `static create()`, `@Annotation`)
+- [ ] What's the first thing a user creates? (constructor, factory, decorator, builder, CLI command)
 - [ ] What's the "hello world" — the simplest working usage?
-- [ ] What factory methods, builders, or bootstrap classes exist?
+- [ ] What factory methods, builders, or bootstrap mechanisms exist?
 
 ### 1.4 API Tiering
 - [ ] **Tier 1 (Essential)**: Used in every application — what are they?
@@ -29,36 +44,36 @@ The order matters — start with what clients see, then trace inward.
 ## Phase 2: Call Chains (what happens when clients call the API)
 
 ### 2.1 Tier 1 Call Traces
-For each Tier 1 API method, trace the execution:
-- [ ] Entry point method → what does it call first?
+For each Tier 1 API method/function, trace the execution:
+- [ ] Entry point method/function → what does it call first?
 - [ ] How many layers deep before real work happens?
-- [ ] Where does delegation occur? (strategy, chain-of-responsibility, observer)
+- [ ] Where does delegation occur? (strategy, chain-of-responsibility, observer, middleware, decorator)
 - [ ] Where does the "return value" get constructed?
 
 ### 2.2 Layer Identification
 From the call traces, identify recurring layers:
-- [ ] **API Layer**: Public classes that validate input and delegate
+- [ ] **API Layer**: Public classes/functions that validate input and delegate
 - [ ] **Dispatch Layer**: Resolution, routing, lookup (if exists)
 - [ ] **Processing Layer**: Core business logic, transformation
 - [ ] **Infrastructure Layer**: I/O, caching, threading, resource management
 
 ### 2.3 Shared Internals
-- [ ] Which internal classes appear in multiple call chains?
+- [ ] Which internal classes/modules appear in multiple call chains?
 - [ ] Are there shared registries, caches, or context objects?
 - [ ] What's the "glue" that connects different API capabilities?
 
 ## Phase 3: Configuration & Extension (how clients customize)
 
 ### 3.1 Configuration API
-- [ ] How do users configure the framework? (builder, properties, annotations, XML)
+- [ ] How do users configure the project? (builder, properties, annotations, decorators, config files, env vars, CLI flags)
 - [ ] What are the configuration entry points?
 - [ ] What are sensible defaults vs. required configuration?
 
 ### 3.2 Extension Points
-- [ ] What interfaces can users implement to extend behavior?
-- [ ] Is there an SPI (Service Provider Interface)?
-- [ ] What annotations trigger user-defined behavior?
-- [ ] What listener/callback hooks exist?
+- [ ] What interfaces/protocols/traits can users implement to extend behavior?
+- [ ] Is there a plugin system, SPI, or extension point mechanism?
+- [ ] What annotations/decorators/attributes trigger user-defined behavior?
+- [ ] What listener/callback/hook mechanisms exist?
 
 ### 3.3 Lifecycle
 - [ ] What lifecycle events exist? (init, start, stop, destroy)
@@ -104,3 +119,20 @@ For each internal component:
 ### 5.3 Framework-Specific Idioms
 - [ ] Any patterns unique to this framework?
 - [ ] Any anti-patterns the framework explicitly avoids?
+
+## Phase 6: Visualization & Insight Planning
+
+### 6.1 Mermaid Diagram Planning
+- [ ] Architecture overview diagram — what are the main components and how they relate?
+- [ ] API Surface Map — which public classes belong to which features?
+- [ ] Call chain diagrams — which Tier 1 APIs need sequence diagrams?
+- [ ] Learning roadmap — how do features depend on each other (for the Mermaid flowchart)?
+- [ ] Vertical slice diagrams — which features need layer visualizations?
+- [ ] Apply standardized color palette per `shared/diagram-standards.md`
+
+### 6.2 Insight Topic Identification
+- [ ] Which API design decisions warrant ★ Insight blocks?
+- [ ] Which simplification choices need rationale documentation?
+- [ ] Which layer boundaries are non-obvious and need explanation?
+- [ ] Which patterns are used differently from the source project and why?
+- [ ] All insights have minimum: **Why** + **Trade-off** + **Recommend** per `shared/insight-format.md`

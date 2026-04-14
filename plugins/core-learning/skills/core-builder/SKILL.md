@@ -2,12 +2,26 @@
 name: core-builder
 version: 1.0.0
 description: >
-  This skill should be used when the user asks to "core-builder", "implement <feature name>", "build the
-  <component> feature", "next feature", "next core feature", or any request to implement a component from
-  a core-blueprint outline. Implements a specific feature from a core-blueprint outline, generating working
-  Java source code, unit/integration tests, and a code-first tutorial guide — all verified to compile and pass.
-  Uses the inside-out approach starting from the integration point. Requires a feature name argument matching
-  an entry in core-outline.md.
+  "implement core feature <name>", "build the <component> core feature", "next core feature",
+  "next core", "continue building core", "core-builder" — this skill implements a specific
+  feature from a core-blueprint outline (requires core-outline.md in the project). Generates
+  working simplified Java source code, unit/integration tests, and a 10-section tutorial chapter
+  with Mermaid diagrams and ★ Insight blocks, all verified to compile and pass. The source
+  project may be in any language — the output is always simplified Java. Uses the inside-out
+  approach starting from the integration point.
+allowed-tools:
+  - Read
+  - Write
+  - Edit
+  - Glob
+  - Grep
+  - Bash
+  - Agent
+file_references:
+  - shared/diagram-standards.md
+  - shared/insight-format.md
+  - shared/quality-checklist.md
+  - shared/technology-defaults.md
 ---
 
 # Core Builder — Feature Implementation
@@ -15,21 +29,25 @@ description: >
 ## Philosophy: Integration Point First, Then Build Outward
 
 Each feature starts at its **integration point** — the exact place where the new feature connects
-to the existing system. The implementation follows the same direction a contributor would: "I see
-where this feature plugs in, I want to understand what supporting code makes it work, so I trace
-outward from the integration point."
+to the existing system. The source project may be in any language (Python, Go, Rust, Node.js, C#,
+Ruby, Java, etc.) — the output is always simplified Java. The implementation follows the same
+direction a contributor would: "I see where this feature plugs in, I want to understand what
+supporting code makes it work, so I trace outward from the integration point."
 
 This produces two artifacts, one truth:
-1. **Real Java code** in `src/` — compiles, tests pass, is the source of truth
-2. **Tutorial chapter** in `core-docs/` — reads back the actual source files, never diverges
+1. **Working Java code** in `src/` — compiles, tests pass, is the source of truth
+2. **Rich tutorial chapter** in `core-docs/` — reads back actual source files, never diverges, enriched with ★ Insight blocks and Mermaid diagrams at every design decision
+
+Every integration point choice, simplification decision, technology mapping choice, and design pattern is a teaching moment. The learner doesn't just see WHAT was built — they understand WHY each choice was made, how the source language's idioms were translated to Java, and what alternatives were considered.
 
 ## MANDATORY: Use Extended Thinking
 
-**Use extended thinking before implementing.** The quality of the implementation depends on deep upfront reasoning about both the real framework and the simplified version. Before writing any code:
+**Use extended thinking before implementing.** The quality of the implementation depends on deep upfront reasoning about both the real source project and the simplified Java version. Before writing any code:
 
-- Study the real framework's implementation of this feature end-to-end
+- Study the source project's implementation of this feature end-to-end (in whatever language it's written in)
 - Identify the integration point — the exact seam where this feature connects to the existing system
-- Plan the simplified class mapping — which real classes to keep, merge, skip, or hardcode
+- Plan the technology mapping — how source language constructs translate to Java (e.g., goroutines to threads/executors, Python generators to Java iterators, Rust traits to Java interfaces)
+- Plan the simplified class mapping — which source types to keep, merge, skip, or hardcode
 - Design the build sequence starting from the integration point outward
 - Determine what to reuse and extend from prior features
 
@@ -42,55 +60,59 @@ The user provides a feature name matching an entry in `core-outline.md`:
 /core-builder "Bean Lifecycle"
 ```
 
-If the user says "next feature", "next core feature", or similar without specifying a name, the skill
+If the user says "next core feature", "next core", or similar without specifying a name, the skill
 automatically selects the next unimplemented feature from `core-outline.md`.
 
 ## Workflow
 
 ### Step 1: Locate and Validate
 
-1. Find the `simple-<framework-name>/` project directory (look for `core-outline.md` in the current directory or immediate subdirectories)
+1. Find the `simple-<project-name>/` project directory (look for `core-outline.md` in the current directory or immediate subdirectories)
 2. **If a feature name is provided**, read `core-outline.md` to find the requested feature. If no match, report an error and list available features.
-3. **If no feature name is provided** (e.g., user said "next feature" or "next core feature"), scan `core-outline.md` for the first feature still marked ⬜ whose dependencies are all ✅. Use that as the target feature. If all features are ✅, tell the user the outline is complete.
+3. **If no feature name is provided** (e.g., user said "next core feature" or "next core"), scan `core-outline.md` for the first feature still marked ⬜ whose dependencies are all ✅. Use that as the target feature. If all features are ✅, tell the user the outline is complete.
 4. Determine the chapter number (`chNN`) based on the feature's position in the outline
 5. **Check dependencies**: verify that all prerequisite features are implemented (look for ✅ markers or existing source files). If dependencies are missing, warn the user: "Feature X depends on [A, B] which haven't been implemented yet. Implement those first, or proceed at your own risk."
 
 ### Step 2: Study the Real Source Code (Agent-Powered)
 
-**Dispatch a `core-learning:core-code-explorer` agent** to deeply analyze the real framework's implementation of this feature.
+**Dispatch a `core-learning:core-code-explorer` agent** to deeply analyze the source project's implementation of this feature. The source may be in any language — the agent adapts its analysis accordingly.
 
 Example prompt:
 ```
-Analyze the <feature-name> implementation in the framework at <framework-path>.
+Analyze the <feature-name> implementation in the source project at <project-path>.
+Source language: <language>
 Focus on the files mapped in the outline: <maps-to list>
 Trace the execution flow for the happy path.
-Identify: key interfaces, implementation classes, design patterns, integration points.
+Identify: key types/interfaces/traits, implementation classes/structs, design patterns, integration points.
+Note language-specific idioms that will need Java equivalents.
 Provide file:line references for the mapping table.
 ```
 
-While the explorer agent runs, record the framework repo's commit hash:
+While the explorer agent runs, record the source project repo's commit hash:
 ```bash
-git -C <framework-path> rev-parse --short HEAD
+git -C <project-path> rev-parse --short HEAD
 ```
 
 After the agent returns, read the essential files it identifies to build your own understanding.
 
-### Step 3: Plan the Simplified Implementation (Agent-Powered)
+### Step 3: Plan the Simplified Java Implementation (Agent-Powered)
 
-**Dispatch a `core-learning:core-code-architect` agent** to design the simplified implementation based on the explorer's findings.
+**Dispatch a `core-learning:core-code-architect` agent** to design the simplified Java implementation based on the explorer's findings.
 
 Example prompt:
 ```
-Design a simplified implementation of <feature-name> for the simple-<framework> project.
-Real framework analysis: <paste explorer findings>
+Design a simplified Java implementation of <feature-name> for the simple-<project> project.
+Source language: <language>
+Source project analysis: <paste explorer findings>
 Existing simplified code: <list prior features' key files>
 Outline entry: <paste the feature's outline entry including integration point hint>
-Produce: integration point design, class mapping table, build sequence, test plan.
+Produce: technology mapping (source → Java), integration point design, class mapping table, build sequence, test plan.
 ```
 
 The architect agent will deliver:
 - **Integration point**: The exact seam, subsystems, direction, and code change
-- **Class mapping**: Real framework classes → simplified classes with simplification rationale
+- **Technology mapping**: Source language constructs → Java equivalents (when source is not Java)
+- **Class mapping**: Source project types → simplified Java classes with simplification rationale
 - **Build sequence**: Implementation order (integration point first)
 - **Test plan**: What to verify with unit and integration tests
 
@@ -132,7 +154,7 @@ Tests serve as living documentation. Someone reading only the test names should 
 
 Run the full test suite — not just this feature's tests:
 ```bash
-cd simple-<framework-name> && ./mvnw test
+cd simple-<project-name> && ./mvnw test
 ```
 (or `./gradlew test` for Gradle projects)
 
@@ -150,66 +172,48 @@ cd simple-<framework-name> && ./mvnw test
 
 Example prompt:
 ```
-Review the <feature-name> implementation (ch<NN>) in the simple-<framework> project at <path>.
+Review the <feature-name> implementation (ch<NN>) in the simple-<project> project at <path>.
 Feature outline entry: <paste outline entry>
-Real framework source: <framework-path>
+Source project: <project-path> (language: <source-language>)
 Files created/modified: <list files>
 Check: simplification correctness, integration point validity, test quality, progressive enhancement integrity.
 Run ./mvnw test to verify all tests pass.
 ```
 
-The reviewer will check:
-- Simplified code correctly captures the essential pattern
-- Integration point is correctly identified and implemented first
-- Tests cover core behavior with proper naming conventions
-- Prior features' tests still pass
-- Code is ready for tutorial documentation
+**Review loop orchestration** (you, the skill, drive this loop — not the reviewer agent):
+1. Dispatch the reviewer agent and read its findings
+2. If Critical issues exist (confidence >= 90): fix them, then re-dispatch the reviewer
+3. If only Important issues remain (80-89): fix them and proceed to Step 8
+4. Stop re-dispatching when: no Critical/High issues remain, OR 5 review passes completed, OR only subjective issues remain
 
-**If the reviewer finds critical issues (confidence >= 90):** fix them before proceeding.
-**If only important issues (80-89):** fix what improves educational quality, note the rest.
+For the full rubric and stop criteria, see [shared/quality-checklist.md](shared/quality-checklist.md).
 
 ### Step 8: Write the Tutorial
 
-Generate `core-docs/chNN_<feature_name>.md` using the template in [references/tutorial-template.md](references/tutorial-template.md).
+Generate `core-docs/chNN_<feature_name>.md` using the template in [references/tutorial-template.md](references/tutorial-template.md). Refer to [shared/diagram-standards.md](shared/diagram-standards.md) for Mermaid color palette and [shared/insight-format.md](shared/insight-format.md) for ★ Insight block format.
+
+Write all **10 sections** following this structure:
+1. **N.1 The Integration Point** — the exact code where this feature plugs into the existing system, with direction statement
+2. **N.2 Supporting Components** — first piece the integration point requires
+3. **N.3 More Components** — continue building outward from integration point
+4. **N.4 Try It Yourself** — challenges in collapsible `<details>` blocks
+5. **N.5 Tests** — unit tests and integration tests (if applicable)
+6. **N.6 Why This Works** — ★ Insight blocks (1-3 per chapter, minimum Why + Trade-off + Recommend)
+7. **N.7 What We Enhanced** — ch01: "Foundation established" summary; ch02+: mandatory enhancement table
+8. **N.8 Connection to Source Project** — source mapping with file:line references, commit hash, and technology mapping (source language → Java)
+9. **N.9 Architecture Visualization** — Mermaid diagrams for this feature's integration point and component relationships
+10. **N.10 Complete Code** — read back every source file created or modified from actual `src/`; include full content; mark each file `[NEW]` or `[MODIFIED]`
 
 **Code-first rule:** Present code before explanations. The reader sees what to build, tries it, runs the tests, THEN reads why it works.
 
-**Modification tracking:** When the feature modifies files from prior features, explicitly declare each change:
-```markdown
-**Modifying:** `src/main/java/simple/<framework>/Core.java`
-**Change:** Add method `handleRequest()` after the existing `register()` method
+**★ Insight blocks in implementation:** Add ★ Insight blocks at major design decision points in N.1-N.3, not just N.6.
 
-```java
-public void handleRequest(Request req) { ... }
-```‎
-```
+End the chapter with a Summary table and "Next chapter" pointer per the tutorial template.
 
-**Try It Yourself sections:** Present challenges in `<details>` tags:
-```markdown
-<details><summary>Challenge: Implement the bean resolver</summary>
+This is the "copy-paste guarantee" — if a reader copies all `[NEW]` files and
+replaces all `[MODIFIED]` files, the project must compile with all tests passing.
 
-```java
-// Solution code here
-```‎
-
-</details>
-```
-
-The user can attempt the challenge before looking at the answer. Since the actual code already exists in `src/`, they can also just look at the files directly.
-
-### Step 9: Generate the Complete Code Chapter
-
-This is the final section (N.9) of the tutorial. Generate it by **reading back the actual source files** that were written/modified in this feature:
-
-1. List all files created or modified in this feature
-2. Read each file's full content from the filesystem
-3. Write them into the tutorial with headers indicating `[NEW]` or `[MODIFIED]`
-
-This guarantees the Complete Code chapter and `src/` are always identical.
-
-Include both production code AND test code in this chapter.
-
-### Step 10: Update the Outline
+### Step 9: Update the Outline
 
 Mark the feature as completed in `core-outline.md`:
 - Change `⬜` to `✅` for this feature
@@ -230,7 +234,7 @@ how real frameworks grow.
 Implement the **minimum** that makes the feature work correctly:
 - Happy-path only — no edge case handling unless core to understanding the pattern
 - Hard-code what can be made configurable later
-- Use JDK built-in types where the real framework has custom types
+- Use JDK built-in types where the source project has custom types
 - Defer performance optimizations entirely
 
 Each later feature can enhance earlier components. The "What We Enhanced" table tracks this
@@ -248,19 +252,23 @@ adding a method to an existing class), always:
 
 Each tutorial follows the structure in [references/tutorial-template.md](references/tutorial-template.md). Key structural rules:
 
+- **All 10 sections** (N.1 through N.10) present in every chapter
 - **Integration point comes FIRST** (N.1) — show the code where this feature plugs into the existing system, then state the direction
 - **Code comes FIRST** (N.1–N.5) before ALL explanations (N.6+)
 - **Build Challenge opens** every chapter — frames the task, not a reading assignment
+- **★ Insight blocks in TWO places** — at design decision points in N.1-N.3, AND comprehensive insights in N.6
 - **Tests before explanations** — the reader runs the tests to confirm it works, then reads why
 - **"What We Enhanced" is mandatory** for all features after ch01
+- **Architecture Visualization (N.9)** — at least one Mermaid diagram per chapter, using standardized color palette
 - **Complete Code is mandatory** for every feature — shows ALL files in full
-- **Insight blocks** (1-3 per chapter) appear only in "Why This Works" — focus on "why", include trade-offs
 
 ## Techniques
 
 See [references/techniques.md](references/techniques.md) for detailed patterns and examples.
 
 ## Quality Checklist
+
+Quick-reference checklist. For the full reviewer rubric with confidence scoring and review loop protocol, see [shared/quality-checklist.md](shared/quality-checklist.md).
 
 Before finalizing, verify:
 
@@ -272,21 +280,21 @@ Before finalizing, verify:
 - [ ] Modified files from prior features are tracked
 
 ### Tutorial
+- [ ] All 10 sections present (N.1 through N.10)
 - [ ] Opens with Build Challenge table (Current State / Limitation / Objective)
-- [ ] N.1 shows the integration point — the exact code where this feature connects to the existing system (for foundation chapters: the core data structure that future features depend on)
-- [ ] Integration point includes a "Direction" statement: what two subsystems connect and what supporting code needs to be built
-- [ ] Key decisions at the integration point are explained (1-2 sentences)
+- [ ] N.1 shows the integration point with "Direction" statement and ★ Insight blocks at key decisions
+- [ ] N.2-N.3 have ★ Insight blocks at design decision points
 - [ ] Code sections (N.1–N.5) appear BEFORE all explanation sections (N.6+)
-- [ ] Has "Try It Yourself" section with `<details>` challenges
-- [ ] Has Tests section with unit tests (and integration tests if applicable)
+- [ ] N.4 has collapsible `<details>` challenges
+- [ ] N.5 has Tests section with unit tests (and integration tests if applicable)
 - [ ] Test method names describe behavior: `should<X>_When<Y>`
-- [ ] Has "Why This Works" with 1-3 `★ Insight` blocks
-- [ ] Has "What We Enhanced" table (if not ch01) with at least one enhancement row
-- [ ] Has "Connection to Real Framework" with file:line references and commit hash
-- [ ] Has "Complete Code" chapter showing ALL files (production + test), matching `src/` exactly
-- [ ] Summary table and "Next chapter" preview at bottom
+- [ ] N.6 has 1-3 ★ Insight blocks with Why + Trade-off + Recommend
+- [ ] N.7 has enhancement table (ch02+) or foundation summary (ch01)
+- [ ] N.8 has Connection to Source Project with file:line references, commit hash, and technology mapping
+- [ ] N.9 has Mermaid diagrams with standard color palette and `<!-- diagram: -->` markers
+- [ ] N.10 has all files read from `src/`, marked `[NEW]`/`[MODIFIED]`
+- [ ] Copy-paste guarantee: copying files produces a compiling, passing project
 - [ ] All modifications to prior features' files are explicitly declared with diffs
-- [ ] Line references verified against the actual source at the recorded commit
 
 ## Output Summary
 
@@ -294,4 +302,5 @@ When done, tell the user:
 1. Which feature was implemented and its chapter number
 2. Test results — all tests passing (both new and prior features)
 3. Where the tutorial is: `core-docs/chNN_<feature_name>.md`
-4. Suggest the next feature from the outline: "Run `/core-builder "<next feature>"`"
+4. Key design decisions made (brief)
+5. Suggest the next feature from the outline: "Run `/core-builder "<next feature>"`"

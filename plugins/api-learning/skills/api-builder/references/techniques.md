@@ -151,19 +151,25 @@ the chapter's API capability.
 
 ## 7. Source Code Mapping Tables
 
-**What**: Three levels of mapping between simplified code and real framework source.
+**What**: Three levels of mapping between simplified Java code and source project code (any language).
 
 ### Per-chapter mapping (in N.8)
-| Simplified | Real Framework | Source Reference |
-|-----------|---------------|-----------------|
-| `simple.api.Router` | `io.javalin.Javalin` | `Javalin.java:45` |
+| Simplified Java | Source Project ({{Language}}) | Source Reference |
+|-----------------|-------------------------------|-----------------|
+| `simple.api.Router` | `io.javalin.Javalin` (Java) or `fastapi.FastAPI` (Python) | `Javalin.java:45` or `applications.py:12` |
+
+### Cross-language technology mapping (in N.8, for non-Java sources)
+| Source Concept | Java Equivalent | Rationale |
+|---------------|-----------------|-----------|
+| Python `@app.get("/")` decorator | `router.get("/", handler)` fluent method | Java lacks decorator syntax; fluent API achieves the same registration pattern |
+| Go `http.HandleFunc` | `router.get(path, handler)` | Direct mapping — both register path-to-handler associations |
 
 ### Cross-chapter evolution (in enhancement table)
-Track how a simplified class grows across chapters to approach the real framework's
+Track how a simplified class grows across chapters to approach the source project's
 functionality.
 
 ### Cross-file relationships
-When a simplified class maps to multiple real classes (because the simplified version
+When a simplified class maps to multiple source classes/modules (because the simplified version
 merges responsibilities), document this explicitly.
 
 **Important**: Include commit hash. Source code references go stale — the hash lets
@@ -175,13 +181,13 @@ readers verify against the exact version you analyzed.
 
 **What**: "What We Enhanced" table, mandatory for ch02+, skip ch01.
 
-| Component | Before (Ch N-1) | Current (Ch N) | Real Framework |
+| Component | Before (Ch N-1) | Current (Ch N) | Source Project |
 |-----------|----------------|----------------|----------------|
 | PathMatcher | Exact string match | Supports path parameters `/users/:id` | Regex + path templates |
 
 **Why**: Shows the reader that simplifications are temporary. Each chapter enhances
-previous internals to support new API capabilities. The "Real Framework" column shows
-what's left — the gap between current state and production quality shrinks every chapter.
+previous internals to support new API capabilities. The "Source Project" column shows
+what's left — the gap between current state and the source project's capability shrinks every chapter.
 
 **Rules**:
 - At least one row per chapter (ch02+)
@@ -215,70 +221,112 @@ and include the full file in the Complete Code section.
 
 ---
 
-## 10. ASCII Diagrams
+## 10. Rich Mermaid Visualization
 
-**What**: Visual diagrams for call chains and component relationships.
+**What**: Mermaid diagrams throughout tutorials — vertical slice diagrams, call chain traces,
+architecture overviews, feature dependency graphs — all using the standardized 7-color palette.
 
-**When**: Use for any call chain with 3+ steps, or any component relationship with 3+
-components.
+**Why**: Visual diagrams accelerate understanding of:
+- Vertical slice structure (which layers a feature touches)
+- Call chain execution flow (sequence diagrams)
+- Component relationships (flowchart diagrams)
+- Feature progression (how internals grow across chapters)
 
-**Call chain diagram** (the signature diagram type for v2):
+**Rules**:
+- Every Mermaid block has `<!-- diagram: slug_name -->` comment above it
+- All arrows labeled with data type, protocol, or relationship
+- Subgraphs for logical grouping
+- Standardized colors: Teal (API surface), Blue (internal logic), Purple (infrastructure),
+  Orange (config), Red (error), Green (success), Yellow (external/client)
+- GitHub-renderable only
+
+**Example — Vertical Slice**:
+```markdown
+<!-- diagram: ch02_post_handler_vertical_slice -->
+```mermaid
+flowchart TD
+    subgraph "Handle POST Requests"
+        API["api/Router.post()"]
+        DISP["internal/PathMatcher"]
+        PROC["internal/BodyParser"]
+    end
+    CLIENT["Client Code"] -->|"calls"| API
+    API -->|"delegates"| DISP
+    DISP -->|"invokes"| PROC
+    style CLIENT fill:#f7dc6f,color:#333
+    style API fill:#4ecdc4,color:#fff
+    style DISP fill:#45b7d1,color:#fff
+    style PROC fill:#45b7d1,color:#fff
 ```
-Client: router.handle(GET /users)
-  │
-  ├─► [Router] look up route for "GET /users"
-  │
-  ├─► [PathMatcher] match "/users" against registered patterns
-  │     └─ found: exact match → Handler#list
-  │
-  ├─► [Handler] execute list() with request context
-  │
-  └─► [Response] 200 OK, body: [{"name":"Alice"}]
+
+**Example — Call Chain Sequence**:
+```markdown
+<!-- diagram: ch02_post_call_chain -->
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant R as Router
+    participant PM as PathMatcher
+    participant BP as BodyParser
+    participant H as Handler
+    C->>R: router.handle(POST /users, body)
+    R->>PM: match("POST", "/users")
+    PM-->>R: Handler#create
+    R->>BP: parse(requestBody)
+    BP-->>R: parsed object
+    R->>H: handle(context)
+    H-->>C: Response 201 Created
 ```
 
-**Layer diagram**:
+**ASCII as supplement**: For inline call chain traces within tutorial prose where
+a quick visual suffices, ASCII diagrams can supplement (not replace) Mermaid:
 ```
-┌──────────────────────────────┐
-│  CLIENT CODE                 │  ← what users write
-├──────────────────────────────┤
-│  API Layer (api/)            │  ← public classes
-├──────────────────────────────┤
-│  Dispatch Layer (internal/)  │  ← routing & resolution
-├──────────────────────────────┤
-│  Processing (internal/)      │  ← core logic
-└──────────────────────────────┘
+Client: router.handle(POST /users, body)
+  ├─► [Router] look up route → PathMatcher
+  ├─► [BodyParser] parse JSON body
+  └─► [Handler] execute create() → Response 201
 ```
 
 ---
 
-## 11. Insight Blocks
+## 11. Structured Insight Blocks
 
-**What**: Educational blocks explaining WHY design decisions work.
+**What**: Educational blocks explaining WHY design decisions work, with a structured
+6-field format for maximum learning value.
 
 **Format**:
-```
-> ★ **Insight** ─────────────────────────────────
->
-> - {{why this design is effective}}
-> - {{what's the alternative and why it falls short}}
-> - {{when NOT to use this pattern}}
->
-> ─────────────────────────────────────────────────
+```markdown
+> ★ **Insight** -------------------------------------------
+> - **Why [topic]?** [Rationale with alternatives considered]
+> - **Trade-off:** [What was sacrificed. Downsides. When this choice might be wrong.]
+> - **Recommend:** [For the learner: when to use this approach vs. alternatives]
+> - **Where:** [→ src/path/File.java — methodName]
+> - **When:** [During init? Runtime? Under load?]
+> - **How to verify:** [Test, log output, or metric that confirms understanding]
+> -----------------------------------------------------------
 ```
 
 **Rules**:
-- ONLY in the "Why This Works" section — after all code is shown
-- 1-3 per chapter
+- **Placement**: In TWO places — N.3 (at design decision points during implementation) AND N.6 (comprehensive insights)
+- **Minimum fields**: Every insight MUST have: **Why** + **Trade-off** + **Recommend**
+- **Full fields**: Include all 6 fields when information is available
+- 1-3 comprehensive insights in N.6 per chapter
 - Focus on WHY, not WHAT
-- Connect to the real framework's approach
+- Connect to the source project's approach
 - Include trade-offs (no design is universally optimal)
-- Mention when the pattern SHOULDN'T be used
+- Lower-impact insights use collapsible `<details>` blocks
 
-**Good insight topics for v2**:
+**Good insight topics for API-first**:
 - Why the API is designed this way (fluent vs. annotation vs. config file)
 - Why the internal layering exists (separation of concerns, testability)
-- Why the real framework is more complex at this layer (performance, edge cases, backwards compatibility)
+- Why a specific simplification was chosen at a depth layer
+- Why the source project is more complex at this layer (performance, edge cases, backwards compatibility)
 - Why simplifications are safe here (the deferred complexity doesn't affect the API contract)
+
+**Bad insight topics**:
+- Describing what code does (the code is right there)
+- Generic Java advice ("use interfaces for abstraction")
+- Repeating what the framework's documentation says
 
 ---
 
@@ -336,3 +384,32 @@ line in the codebase.
 A reader can understand the full API by reading only `api/` and `test/api/`. They
 never need to look at `internal/` to USE the framework — only to UNDERSTAND or
 CONTRIBUTE TO it. That's the whole point of the outside-in approach.
+
+---
+
+## 14. Technology Substitution Mapping
+
+**What**: When the source project is in a different language (Python, Go, Rust, Node.js, C#,
+Ruby, etc.), document how each source language concept maps to a Java equivalent in the
+simplified implementation.
+
+**Why**: Cross-language reimplementation is a powerful learning technique — it forces deep
+understanding of WHAT a concept does (behavior) vs. HOW a language expresses it (syntax).
+The mapping table makes these translations explicit and educational.
+
+**Structure**: A lightweight mapping table in the outline and in each tutorial chapter's N.8 section:
+
+| Source Concept (Language) | Java Equivalent | Why This Mapping |
+|---------------------------|-----------------|------------------|
+| Python `@app.get("/")` decorator | `router.get("/", handler)` fluent method | Java lacks decorators; fluent API preserves the registration intent |
+| Go `func(w http.ResponseWriter, r *http.Request)` | `Handler` functional interface | Both are function signatures for request handling |
+| Rust `async fn` + `impl Responder` | `Handler` returning `Response` | Simplified away async; kept the response contract |
+| Node.js `app.use(middleware)` | `router.use(filter)` | Direct mapping; middleware = filter in Java servlet terms |
+| C# `[HttpGet("/")]` attribute | `@Get("/")` annotation or fluent `.get()` | Both are metadata-driven route registration |
+
+**Rules**:
+- Keep mappings lightweight — a table per feature, not an exhaustive language comparison
+- Focus on mappings relevant to THIS feature's API capability
+- Explain WHY the Java equivalent was chosen, not just WHAT it is
+- Note when the Java version is simpler (common) or more complex (rare) than the source
+- This is NOT a full deviation report (that's enterprise-learning) — just a mapping table
