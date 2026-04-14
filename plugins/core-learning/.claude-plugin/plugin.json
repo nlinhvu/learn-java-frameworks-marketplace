@@ -6,7 +6,5 @@
     "name": "nlinhvu"
   },
   "license": "Apache-2.0",
-  "keywords": ["java", "reimplementation", "any-language", "learning", "tutorial", "simplified", "core-first", "cross-language"],
-  "skills": ["core-blueprint", "core-builder"],
-  "agents": ["core-code-explorer", "core-code-architect", "core-code-reviewer"]
+  "keywords": ["java", "reimplementation", "any-language", "learning", "tutorial", "simplified", "core-first", "cross-language"]
 }

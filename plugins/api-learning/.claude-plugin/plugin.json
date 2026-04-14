@@ -6,7 +6,5 @@
     "name": "nlinhvu"
   },
   "license": "Apache-2.0",
-  "keywords": ["java", "polyglot", "any-language", "framework", "learning", "tutorial", "simplified", "api-first", "reimplementation"],
-  "skills": ["api-blueprint", "api-builder"],
-  "agents": ["api-code-explorer", "api-code-architect", "api-code-reviewer"]
+  "keywords": ["java", "polyglot", "any-language", "framework", "learning", "tutorial", "simplified", "api-first", "reimplementation"]
 }

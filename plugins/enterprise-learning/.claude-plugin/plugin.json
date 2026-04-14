@@ -6,7 +6,5 @@
     "name": "nlinhvu"
   },
   "license": "Apache-2.0",
-  "keywords": ["java", "enterprise", "spring-boot", "learning", "re-implementation", "tutorial", "visualization", "multi-language"],
-  "skills": ["enterprise-blueprint", "enterprise-builder"],
-  "agents": ["enterprise-code-explorer", "enterprise-code-architect", "enterprise-code-reviewer"]
+  "keywords": ["java", "enterprise", "spring-boot", "learning", "re-implementation", "tutorial", "visualization", "multi-language"]
 }
