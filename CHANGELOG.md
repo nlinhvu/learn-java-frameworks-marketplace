@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `core-code-explorer` agent for tracing internal hierarchies and execution flows
   - `core-code-architect` agent for designing simplified component architectures
   - `core-code-reviewer` agent for validating correctness and tutorial accuracy
+- **enterprise-learning plugin** -- re-implement any source project (any language) into enterprise-grade Java
+  - `enterprise-blueprint` skill for analyzing source projects, classifying type, and generating outlines with technology mappings
+  - `enterprise-builder` skill for implementing features with rich tutorials, Mermaid visualizations, and Insight blocks
+  - `enterprise-code-explorer` agent for multi-language source analysis and project type classification
+  - `enterprise-code-architect` agent for enterprise Java architecture design and technology mapping
+  - `enterprise-code-reviewer` agent for validating correct stack usage, tutorial completeness, and visualization quality
+  - Shared standards for diagrams, insights, quality checklists, and technology defaults
 - Marketplace manifest with plugin registry
 - Reference templates for outlines and tutorials
 - Analysis checklists for framework exploration

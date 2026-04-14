@@ -1,6 +1,6 @@
 # Learn Java Frameworks Marketplace
 
-A curated collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugins for learning Java frameworks by building simplified versions from source code. Each plugin combines specialized skills, agents, and reference templates to guide you through analyzing real framework internals and reimplementing them as working, tested code with tutorial documentation.
+A curated collection of [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugins for learning Java frameworks by building simplified versions from source code — or by re-implementing any project into enterprise-grade Java. Each plugin combines specialized skills, agents, and reference templates to guide you through analyzing real framework internals and reimplementing them as working, tested code with tutorial documentation.
 
 ## ⚠️🔥 Warning: High Token Usage 🔥⚠️
 
@@ -21,6 +21,7 @@ If you are on a **Claude Pro subscription**, expect to run only **1-2 skill invo
 ```                                                                                                                                                                                                                                                                                                        
 /plugin install api-learning@learn-java-frameworks-marketplace
 /plugin install core-learning@learn-java-frameworks-marketplace
+/plugin install enterprise-learning@learn-java-frameworks-marketplace
 ```                                                                                                                                                                                                                                                                                                        
                                                                                                                                                                                                                                                                                                      
 Or browse and install interactively via `/plugin` → **Discover** tab.
@@ -65,11 +66,29 @@ Or browse and install interactively via `/plugin` → **Discover** tab.
 /core-builder feature-2
 ```
 
+### Enterprise Re-implementation (Any Language → Java)
+
+```
+# Analyze any source project (Go, Python, Rust, Node.js, etc.)
+/enterprise-blueprint /path/to/source-project
+
+# Clear context to avoid context pollution
+/clear
+
+# Implement features one at a time
+/enterprise-builder "User Authentication"
+
+# Clear context to avoid context pollution
+/clear
+
+/enterprise-builder "next feature"
+```
+
 ## Prerequisites
 
 - Java 17+
 - Maven or Gradle
-- A locally cloned Java framework/library repository
+- A locally cloned Java framework/library repository (for api-learning and core-learning), or any source project in any language (for enterprise-learning)
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI
 
 ## Plugins
@@ -112,9 +131,28 @@ Learn frameworks starting from the **internal core** and building outward. You s
 | `core-code-architect` | Designs simplified component architectures and integration strategies |
 | `core-code-reviewer` | Validates correctness, test quality, and tutorial accuracy |
 
+### Enterprise Learning -- Any Language → Enterprise Java
+
+Re-implement any source project (Go, Python, Rust, Node.js, C#, Ruby, Java/Quarkus/Micronaut, etc.) into enterprise-grade Java. Every technology choice, architecture decision, and design trade-off is documented with rich Mermaid visualizations and Insight blocks explaining the **why** behind each choice.
+
+**Skills:**
+
+| Skill | Command | What It Does |
+|-------|---------|--------------|
+| `enterprise-blueprint` | `/enterprise-blueprint` | Analyzes a source project, classifies it (Application/Library/Framework), produces an outline with technology mapping, deviation report, and project skeleton |
+| `enterprise-builder` | `/enterprise-builder` | Implements a single feature as working Java code + tests + 10-section tutorial chapter with Mermaid diagrams and Insight blocks |
+
+**Agents:**
+
+| Agent | Role |
+|-------|------|
+| `enterprise-code-explorer` | Multi-language source analysis, project type classification, technology identification |
+| `enterprise-code-architect` | Enterprise Java architecture design, technology mapping, module structure |
+| `enterprise-code-reviewer` | Validates correct stack, tutorial completeness, visualization quality, insight depth |
+
 ## How It Works
 
-Both plugins follow a two-step workflow:
+All three plugins follow a two-step workflow:
 
 **Step 1 -- Blueprint.** Point the blueprint skill at a locally cloned Java framework. It analyzes the source code using specialized explorer agents, produces an architecture overview, and generates a prioritized learning outline with a dependency graph.
 
@@ -166,6 +204,27 @@ plugins/
       core-code-explorer.md     # Core analysis agent
       core-code-architect.md    # Component design agent
       core-code-reviewer.md     # Quality validation agent
+    README.md
+    LICENSE
+  enterprise-learning/          # Any-language-to-Java learning plugin
+    .claude-plugin/
+      plugin.json               # Plugin manifest
+    skills/
+      enterprise-blueprint/     # Source project analysis skill
+        SKILL.md
+        references/             # Templates and checklists
+      enterprise-builder/       # Feature implementation skill
+        SKILL.md
+        references/             # Templates and techniques
+    agents/
+      enterprise-code-explorer.md   # Multi-language source analysis agent
+      enterprise-code-architect.md  # Enterprise architecture design agent
+      enterprise-code-reviewer.md   # Quality validation agent
+    shared/                     # Cross-cutting standards
+      diagram-standards.md      # Mermaid color palette and diagram rules
+      insight-format.md         # Insight block template and rules
+      quality-checklist.md      # Reviewer rubric and review loop protocol
+      technology-defaults.md    # Default Java stack per project type
     README.md
     LICENSE
 ```
